@@ -585,6 +585,7 @@ export type Database = {
           withdrawn: number
         }[]
       }
+      claim_referral: { Args: { _code: string }; Returns: boolean }
       get_my_balance: {
         Args: never
         Returns: {

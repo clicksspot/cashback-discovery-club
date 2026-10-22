@@ -15,6 +15,13 @@
       "when": 1792647045581,
       "tag": "0001_favorites_referrals_claims",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792647109381,
+      "tag": "0002_claim_referral",
+      "breakpoints": true
     }
   ]
 }
