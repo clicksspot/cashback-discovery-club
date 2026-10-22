@@ -28,6 +28,7 @@ import { Route as StoresIndexRouteImport } from './routes/stores.index'
 import { Route as StoresSlugRouteImport } from './routes/stores.$slug'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminCategoriesRouteImport } from './routes/_authenticated/admin.categories'
+import { Route as AuthenticatedAdminClaimsRouteImport } from './routes/_authenticated/admin.claims'
 import { Route as AuthenticatedAdminOffersRouteImport } from './routes/_authenticated/admin.offers'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as AuthenticatedAdminStoresRouteImport } from './routes/_authenticated/admin.stores'
@@ -133,6 +134,12 @@ const AuthenticatedAdminCategoriesRoute =
     path: '/categories',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminClaimsRoute =
+  AuthenticatedAdminClaimsRouteImport.update({
+    id: '/claims',
+    path: '/claims',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminOffersRoute =
   AuthenticatedAdminOffersRouteImport.update({
     id: '/offers',
@@ -203,6 +210,7 @@ export interface FileRoutesByFullPath {
   '/stores/$slug': typeof StoresSlugRoute
   '/stores/': typeof StoresIndexRoute
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
+  '/admin/claims': typeof AuthenticatedAdminClaimsRoute
   '/admin/offers': typeof AuthenticatedAdminOffersRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/stores': typeof AuthenticatedAdminStoresRoute
@@ -231,6 +239,7 @@ export interface FileRoutesByTo {
   '/stores/$slug': typeof StoresSlugRoute
   '/stores': typeof StoresIndexRoute
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
+  '/admin/claims': typeof AuthenticatedAdminClaimsRoute
   '/admin/offers': typeof AuthenticatedAdminOffersRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/stores': typeof AuthenticatedAdminStoresRoute
@@ -262,6 +271,7 @@ export interface FileRoutesById {
   '/stores/$slug': typeof StoresSlugRoute
   '/stores/': typeof StoresIndexRoute
   '/_authenticated/admin/categories': typeof AuthenticatedAdminCategoriesRoute
+  '/_authenticated/admin/claims': typeof AuthenticatedAdminClaimsRoute
   '/_authenticated/admin/offers': typeof AuthenticatedAdminOffersRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/stores': typeof AuthenticatedAdminStoresRoute
@@ -293,6 +303,7 @@ export interface FileRouteTypes {
     | '/stores/$slug'
     | '/stores/'
     | '/admin/categories'
+    | '/admin/claims'
     | '/admin/offers'
     | '/admin/settings'
     | '/admin/stores'
@@ -321,6 +332,7 @@ export interface FileRouteTypes {
     | '/stores/$slug'
     | '/stores'
     | '/admin/categories'
+    | '/admin/claims'
     | '/admin/offers'
     | '/admin/settings'
     | '/admin/stores'
@@ -351,6 +363,7 @@ export interface FileRouteTypes {
     | '/stores/$slug'
     | '/stores/'
     | '/_authenticated/admin/categories'
+    | '/_authenticated/admin/claims'
     | '/_authenticated/admin/offers'
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/stores'
@@ -516,6 +529,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminCategoriesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/claims': {
+      id: '/_authenticated/admin/claims'
+      path: '/claims'
+      fullPath: '/admin/claims'
+      preLoaderRoute: typeof AuthenticatedAdminClaimsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/offers': {
       id: '/_authenticated/admin/offers'
       path: '/offers'
@@ -584,6 +604,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminCategoriesRoute: typeof AuthenticatedAdminCategoriesRoute
+  AuthenticatedAdminClaimsRoute: typeof AuthenticatedAdminClaimsRoute
   AuthenticatedAdminOffersRoute: typeof AuthenticatedAdminOffersRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminStoresRoute: typeof AuthenticatedAdminStoresRoute
@@ -596,6 +617,7 @@ interface AuthenticatedAdminRouteChildren {
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminCategoriesRoute: AuthenticatedAdminCategoriesRoute,
+  AuthenticatedAdminClaimsRoute: AuthenticatedAdminClaimsRoute,
   AuthenticatedAdminOffersRoute: AuthenticatedAdminOffersRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminStoresRoute: AuthenticatedAdminStoresRoute,

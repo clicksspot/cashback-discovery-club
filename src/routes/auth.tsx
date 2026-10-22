@@ -65,9 +65,10 @@ function AuthPage() {
   useEffect(() => {
     if (loading || !user) return;
     const ref = takeRememberedRef();
-    (ref ? supabase.rpc("claim_referral", { _code: ref }).then(() => undefined) : Promise.resolve()).finally(() =>
-      router.history.push(target),
-    );
+    void (async () => {
+      if (ref) await supabase.rpc("claim_referral", { _code: ref });
+      router.history.push(target);
+    })();
   }, [loading, user, target, router]);
 
   const submit = async (e: React.FormEvent) => {
