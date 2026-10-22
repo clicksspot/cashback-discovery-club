@@ -98,6 +98,9 @@ function AdminSettings() {
           <Field label="Default shopper share (%)" hint="Example: 50 means a $10 commission gives the member $5. You can override this per store.">
             <Input type="number" min={0} max={100} step="0.01" value={f.default_cashback_percent} onChange={(e) => set("default_cashback_percent", num(e.target.value))} />
           </Field>
+          <Field label="Referral bonus" hint="Paid to a member when a friend they invited gets their first cashback approved. 0 turns it off.">
+            <Input type="number" min={0} step="0.01" value={f.referral_bonus} onChange={(e) => set("referral_bonus", num(e.target.value))} />
+          </Field>
           <Field label="Currency" hint="3-letter code, e.g. USD">
             <Input value={f.currency} maxLength={3} onChange={(e) => set("currency", e.target.value.toUpperCase())} />
           </Field>
