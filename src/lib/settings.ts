@@ -17,6 +17,7 @@ export type Settings = {
   actions_lookback_days: number;
   support_email: string;
   announcement: string;
+  referral_bonus: number;
 };
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -39,6 +40,7 @@ export const DEFAULT_SETTINGS: Settings = {
   actions_lookback_days: 30,
   support_email: "",
   announcement: "",
+  referral_bonus: 5,
 };
 
 export function parseSettings(rows: { key: string; value: unknown }[] | null | undefined): Settings {

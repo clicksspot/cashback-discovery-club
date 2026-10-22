@@ -307,6 +307,7 @@ function StoreDialog({
               <Field label="Impact pays you"><Input type="number" step="0.01" value={f.commission_rate ?? ""} onChange={(e) => set("commission_rate", numOrNull(e.target.value))} /></Field>
               <Field label={`Shopper share % (blank = ${defaultShare}%)`}><Input type="number" step="0.01" min={0} max={100} value={f.cashback_share ?? ""} onChange={(e) => set("cashback_share", numOrNull(e.target.value))} /></Field>
               <Field label="Fixed rate shown (optional)"><Input type="number" step="0.01" value={f.display_rate_override ?? ""} onChange={(e) => set("display_rate_override", numOrNull(e.target.value))} /></Field>
+              <Field label="Previous rate (shows a Boosted badge)"><Input type="number" step="0.01" value={f.previous_rate ?? ""} onChange={(e) => set("previous_rate", numOrNull(e.target.value))} /></Field>
               <Field label="Text before rate"><Input value={f.rate_prefix ?? ""} placeholder="Up to" onChange={(e) => set("rate_prefix", e.target.value)} /></Field>
             </div>
             <p className="mt-2 text-xs text-muted-foreground">Shoppers always receive their share of the real commission Impact reports. The rate shown is for display.</p>

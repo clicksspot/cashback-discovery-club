@@ -12,6 +12,7 @@ import {
   Tag,
   Users,
   Wallet,
+  LifeBuoy,
   ExternalLink,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
@@ -41,6 +42,7 @@ const NAV = [
   { to: "/admin/categories", label: "Categories", icon: FolderTree },
   { to: "/admin/transactions", label: "Cashback & sales", icon: ArrowLeftRight },
   { to: "/admin/withdrawals", label: "Withdrawals", icon: Wallet },
+  { to: "/admin/claims", label: "Missing cashback", icon: LifeBuoy },
   { to: "/admin/users", label: "Members", icon: Users },
   { to: "/admin/sync", label: "Impact sync", icon: RefreshCw },
   { to: "/admin/settings", label: "Settings", icon: Settings },
