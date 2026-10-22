@@ -8,14 +8,15 @@ import { CategoryIcon } from "@/components/site/CategoryIcon";
 import { Button } from "@/components/ui/button";
 import { categoriesQuery, settingsQuery, storesQuery } from "@/lib/public.functions";
 import { displayRate } from "@/lib/cashback";
+import { isBoosted } from "@/lib/referral";
 
-type StoresSearch = { q?: string | undefined; cat?: string | undefined; sort?: "popular" | "rate" | "az" | undefined };
+type StoresSearch = { q?: string | undefined; cat?: string | undefined; sort?: "popular" | "rate" | "az" | "boosted" | undefined };
 
 export const Route = createFileRoute("/stores/")({
   validateSearch: (s: Record<string, unknown>): StoresSearch => ({
     q: typeof s["q"] === "string" && s["q"] ? s["q"] : undefined,
     cat: typeof s["cat"] === "string" && s["cat"] ? s["cat"] : undefined,
-    sort: s["sort"] === "rate" || s["sort"] === "az" ? s["sort"] : undefined,
+    sort: s["sort"] === "rate" || s["sort"] === "az" || s["sort"] === "boosted" ? s["sort"] : undefined,
   }),
   loader: async ({ context }) => {
     const [settings] = await Promise.all([
@@ -60,6 +61,8 @@ function StoresPage() {
     let list = stores.filter(
       (s) => (!q || s.name.toLowerCase().includes(q)) && (!activeCat || s.category_id === activeCat.id),
     );
+    if (search.sort === "boosted")
+      list = list.filter((s) => isBoosted(s.previous_rate, displayRate(s, settings.default_cashback_percent)));
     if (search.sort === "az") list = [...list].sort((a, b) => a.name.localeCompare(b.name));
     if (search.sort === "rate")
       list = [...list].sort(
@@ -118,6 +121,7 @@ function StoresPage() {
               [
                 ["popular", "Popular"],
                 ["rate", "Highest cashback"],
+                ["boosted", "Boosted"],
                 ["az", "A–Z"],
               ] as const
             ).map(([key, label]) => (

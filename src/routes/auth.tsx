@@ -11,8 +11,9 @@ import { Label } from "@/components/ui/label";
 import { Logo } from "@/components/site/SiteShell";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { settingsQuery } from "@/lib/public.functions";
+import { normalizeRefCode, peekRememberedRef, rememberRef, takeRememberedRef } from "@/lib/referral";
 
-type AuthSearch = { mode?: "signin" | "signup" | undefined; redirect?: string | undefined };
+type AuthSearch = { mode?: "signin" | "signup" | undefined; redirect?: string | undefined; ref?: string | undefined };
 
 function safeRedirect(r?: string) {
   return r && r.startsWith("/") && !r.startsWith("//") ? r : "/account";
@@ -22,6 +23,7 @@ export const Route = createFileRoute("/auth")({
   validateSearch: (s: Record<string, unknown>): AuthSearch => ({
     mode: s["mode"] === "signup" ? "signup" : undefined,
     redirect: typeof s["redirect"] === "string" ? s["redirect"] : undefined,
+    ref: normalizeRefCode(s["ref"]) ?? undefined,
   }),
   loader: async ({ context }) => {
     const settings = await context.queryClient.ensureQueryData(settingsQuery);
@@ -57,7 +59,15 @@ function AuthPage() {
   const target = safeRedirect(search.redirect);
 
   useEffect(() => {
-    if (!loading && user) router.history.push(target);
+    if (search.ref) rememberRef(search.ref);
+  }, [search.ref]);
+
+  useEffect(() => {
+    if (loading || !user) return;
+    const ref = takeRememberedRef();
+    (ref ? supabase.rpc("claim_referral", { _code: ref }).then(() => undefined) : Promise.resolve()).finally(() =>
+      router.history.push(target),
+    );
   }, [loading, user, target, router]);
 
   const submit = async (e: React.FormEvent) => {
@@ -71,7 +81,7 @@ function AuthPage() {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: window.location.origin + target, data: { full_name: name } },
+          options: { emailRedirectTo: window.location.origin + target, data: { full_name: name, ref: peekRememberedRef() ?? search.ref ?? "" } },
         });
         if (error) throw error;
         if (!data.session) setSent("Check your inbox and click the link to confirm your account.");
@@ -124,6 +134,9 @@ function AuthPage() {
               <p className="mt-1 text-sm text-muted-foreground">
                 {mode === "signin" ? "Sign in to see your cashback." : mode === "signup" ? "Start earning on your next order." : "We'll email you a reset link."}
               </p>
+              {mode === "signup" && search.ref && (
+                <p className="mt-3 rounded-lg bg-lime px-3 py-2 text-sm font-semibold text-lime-foreground">A friend invited you — welcome!</p>
+              )}
               {mode !== "forgot" && (
                 <>
                   <Button type="button" variant="outline" className="mt-6 w-full" onClick={google}>

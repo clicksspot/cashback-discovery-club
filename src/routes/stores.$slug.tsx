@@ -6,6 +6,8 @@ import { StoreLogo } from "@/components/site/StoreLogo";
 import { Button } from "@/components/ui/button";
 import { settingsQuery, storeOffersQuery, storeQuery } from "@/lib/public.functions";
 import { OfferCard } from "@/components/site/OfferCard";
+import { FavoriteButton } from "@/components/site/FavoriteButton";
+import { previousRateLabel } from "@/components/site/StoreCard";
 import { formatRate } from "@/lib/cashback";
 
 export const Route = createFileRoute("/stores/$slug")({
@@ -53,6 +55,7 @@ function StorePage() {
   const { data: offers } = useSuspenseQuery(storeOffersQuery(store?.id ?? ""));
   if (!store) return null;
   const rate = formatRate(store, settings.default_cashback_percent, settings.currency);
+  const was = previousRateLabel(store, settings);
   const showOffers = settings.show_deals && offers.length > 0;
 
   return (
@@ -66,6 +69,7 @@ function StorePage() {
             <p className="mt-3 font-display text-3xl font-extrabold text-lime">
               {rate ? `${store.rate_prefix ? store.rate_prefix + " " : ""}${rate} cash back` : "Cash back available"}
             </p>
+            {was && <p className="mt-1 text-sm font-semibold text-forest-foreground/70">Boosted — was <span className="line-through">{was}</span></p>}
           </div>
           <div className="flex flex-col gap-2">
             <Button asChild variant="hero" size="lg" disabled={!store.tracking_link}>
@@ -73,6 +77,7 @@ function StorePage() {
                 Shop now & earn <ArrowRight />
               </Link>
             </Button>
+            <FavoriteButton storeId={store.id} withLabel className="justify-center" />
             <p className="text-center text-xs text-forest-foreground/60">Sign in first so we can track your cashback</p>
           </div>
         </div>
@@ -125,6 +130,11 @@ function StorePage() {
               <p className="flex gap-3"><Clock className="h-5 w-5 shrink-0 text-primary" /> Purchases usually show as pending within 1–3 days.</p>
               <p className="flex gap-3"><ShieldCheck className="h-5 w-5 shrink-0 text-primary" /> The store confirms the order after its return window, then your cashback becomes available.</p>
             </div>
+          </div>
+          <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
+            <h3 className="font-bold">Cashback not showing?</h3>
+            <p className="mt-2 text-sm text-muted-foreground">If your purchase hasn't appeared after 7 days, tell us and we'll chase it with {store.name}.</p>
+            <Button asChild variant="outline" size="sm" className="mt-4"><Link to="/claims">Report missing cashback</Link></Button>
           </div>
         </aside>
       </div>
