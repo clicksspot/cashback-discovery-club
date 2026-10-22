@@ -62,6 +62,56 @@ export type Database = {
         }
         Relationships: []
       }
+      claims: {
+        Row: {
+          admin_note: string | null
+          created_at: string
+          details: string | null
+          id: string
+          order_amount: number
+          order_date: string
+          order_ref: string
+          status: string
+          store_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_note?: string | null
+          created_at?: string
+          details?: string | null
+          id?: string
+          order_amount: number
+          order_date: string
+          order_ref: string
+          status?: string
+          store_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_note?: string | null
+          created_at?: string
+          details?: string | null
+          id?: string
+          order_amount?: number
+          order_date?: string
+          order_ref?: string
+          status?: string
+          store_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "claims_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clicks: {
         Row: {
           created_at: string
@@ -94,6 +144,35 @@ export type Database = {
           },
           {
             foreignKeyName: "clicks_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      favorites: {
+        Row: {
+          created_at: string
+          id: string
+          store_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          store_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          store_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "favorites_store_id_fkey"
             columns: ["store_id"]
             isOneToOne: false
             referencedRelation: "stores"
@@ -206,6 +285,8 @@ export type Database = {
           full_name: string | null
           id: string
           is_blocked: boolean
+          referral_code: string | null
+          referred_by: string | null
           updated_at: string
         }
         Insert: {
@@ -214,6 +295,8 @@ export type Database = {
           full_name?: string | null
           id: string
           is_blocked?: boolean
+          referral_code?: string | null
+          referred_by?: string | null
           updated_at?: string
         }
         Update: {
@@ -222,6 +305,8 @@ export type Database = {
           full_name?: string | null
           id?: string
           is_blocked?: boolean
+          referral_code?: string | null
+          referred_by?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -244,6 +329,7 @@ export type Database = {
           last_synced_at: string | null
           logo_url: string | null
           name: string
+          previous_rate: number | null
           rate_prefix: string
           slug: string
           sort_order: number
@@ -270,6 +356,7 @@ export type Database = {
           last_synced_at?: string | null
           logo_url?: string | null
           name: string
+          previous_rate?: number | null
           rate_prefix?: string
           slug: string
           sort_order?: number
@@ -296,6 +383,7 @@ export type Database = {
           last_synced_at?: string | null
           logo_url?: string | null
           name?: string
+          previous_rate?: number | null
           rate_prefix?: string
           slug?: string
           sort_order?: number
@@ -362,6 +450,7 @@ export type Database = {
           locked_by_admin: boolean
           note: string | null
           order_amount: number
+          referral_for: string | null
           source: string
           status: string
           store_id: string | null
@@ -382,6 +471,7 @@ export type Database = {
           locked_by_admin?: boolean
           note?: string | null
           order_amount?: number
+          referral_for?: string | null
           source?: string
           status?: string
           store_id?: string | null
@@ -402,6 +492,7 @@ export type Database = {
           locked_by_admin?: boolean
           note?: string | null
           order_amount?: number
+          referral_for?: string | null
           source?: string
           status?: string
           store_id?: string | null
@@ -501,6 +592,14 @@ export type Database = {
           available: number
           pending: number
           withdrawn: number
+        }[]
+      }
+      get_my_referrals: {
+        Args: never
+        Returns: {
+          bonus_paid: boolean
+          friend_name: string
+          joined_at: string
         }[]
       }
       has_role: {
