@@ -1,7 +1,8 @@
 import { useState, type ReactNode } from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { Leaf, Menu, Search, X } from "lucide-react";
+import { Leaf, Menu, X } from "lucide-react";
+import { SearchBox } from "./SearchBox";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { settingsQuery } from "@/lib/public.functions";
@@ -30,15 +31,7 @@ export function Logo({ name, light = false }: { name: string; light?: boolean })
 function SiteHeader() {
   const { data: settings } = useSuspenseQuery(settingsQuery);
   const { user, isAdmin } = useAuth();
-  const navigate = useNavigate();
-  const [q, setQ] = useState("");
   const [open, setOpen] = useState(false);
-
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    navigate({ to: "/stores", search: { q: q.trim() || undefined } });
-    setOpen(false);
-  };
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/70 bg-background/85 backdrop-blur">
@@ -63,16 +56,11 @@ function SiteHeader() {
           <Link to="/how-it-works" className="rounded-md px-3 py-2 text-sm font-medium text-foreground/80 hover:bg-secondary" activeProps={{ className: "bg-secondary text-foreground" }}>
             How it works
           </Link>
+          <Link to="/refer" className="rounded-md px-3 py-2 text-sm font-medium text-foreground/80 hover:bg-secondary" activeProps={{ className: "bg-secondary text-foreground" }}>
+            Refer & earn
+          </Link>
         </nav>
-        <form onSubmit={submit} className="relative ml-auto hidden max-w-xs flex-1 lg:block">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="Search stores…"
-            className="h-10 w-full rounded-full border border-input bg-card pl-9 pr-4 text-sm outline-none focus:ring-2 focus:ring-ring"
-          />
-        </form>
+        <SearchBox className="ml-auto hidden max-w-xs flex-1 lg:block" />
         <div className="ml-auto hidden items-center gap-2 md:flex lg:ml-0">
           {user ? (
             <>
@@ -103,13 +91,12 @@ function SiteHeader() {
       {open && (
         <div className="border-t border-border bg-background md:hidden">
           <div className="container-page flex flex-col gap-2 py-4">
-            <form onSubmit={submit} className="relative">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search stores…" className="h-10 w-full rounded-full border border-input bg-card pl-9 pr-4 text-sm outline-none" />
-            </form>
+            <SearchBox onDone={() => setOpen(false)} />
             <Link to="/stores" search={{}} onClick={() => setOpen(false)} className="rounded-md px-2 py-2 font-medium">All stores</Link>
             {settings.show_deals && <Link to="/deals" search={{}} onClick={() => setOpen(false)} className="rounded-md px-2 py-2 font-medium">Deals & coupons</Link>}
             <Link to="/how-it-works" onClick={() => setOpen(false)} className="rounded-md px-2 py-2 font-medium">How it works</Link>
+            <Link to="/refer" onClick={() => setOpen(false)} className="rounded-md px-2 py-2 font-medium">Refer & earn</Link>
+            <Link to="/help" onClick={() => setOpen(false)} className="rounded-md px-2 py-2 font-medium">Help</Link>
             {user ? (
               <>
                 {isAdmin && <Link to="/admin" onClick={() => setOpen(false)} className="rounded-md px-2 py-2 font-medium">Admin</Link>}
@@ -131,7 +118,7 @@ function SiteFooter() {
   const { data: settings } = useSuspenseQuery(settingsQuery);
   return (
     <footer className="mt-20 bg-forest text-forest-foreground">
-      <div className="container-page grid gap-10 py-14 md:grid-cols-4">
+      <div className="container-page grid gap-10 py-14 md:grid-cols-5">
         <div className="md:col-span-2">
           <Logo name={settings.site_name} light />
           <p className="mt-4 max-w-sm text-sm text-forest-foreground/70">{settings.tagline}</p>
@@ -142,12 +129,23 @@ function SiteFooter() {
             <li><Link to="/stores" search={{}} className="hover:text-lime">All stores</Link></li>
             {settings.show_deals && <li><Link to="/deals" search={{}} className="hover:text-lime">Deals & coupons</Link></li>}
             <li><Link to="/how-it-works" className="hover:text-lime">How it works</Link></li>
+            <li><Link to="/refer" className="hover:text-lime">Refer a friend</Link></li>
+          </ul>
+        </div>
+        <div>
+          <h4 className="text-sm font-semibold">Help</h4>
+          <ul className="mt-3 space-y-2 text-sm text-forest-foreground/70">
+            <li><Link to="/help" className="hover:text-lime">Help centre & FAQ</Link></li>
+            <li><Link to="/claims" className="hover:text-lime">Missing cashback</Link></li>
+            <li><Link to="/terms" className="hover:text-lime">Terms of use</Link></li>
+            <li><Link to="/privacy" className="hover:text-lime">Privacy policy</Link></li>
           </ul>
         </div>
         <div>
           <h4 className="text-sm font-semibold">Account</h4>
           <ul className="mt-3 space-y-2 text-sm text-forest-foreground/70">
             <li><Link to="/account" className="hover:text-lime">My cashback</Link></li>
+            <li><Link to="/favorites" className="hover:text-lime">Favourite stores</Link></li>
             <li><Link to="/auth" className="hover:text-lime">Sign in</Link></li>
             {settings.support_email && (
               <li><a href={`mailto:${settings.support_email}`} className="hover:text-lime">{settings.support_email}</a></li>
