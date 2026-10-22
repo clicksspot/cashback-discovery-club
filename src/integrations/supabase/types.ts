@@ -14,16 +14,518 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      app_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
+      categories: {
+        Row: {
+          created_at: string
+          icon: string | null
+          id: string
+          is_active: boolean
+          name: string
+          slug: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          slug: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          slug?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      clicks: {
+        Row: {
+          created_at: string
+          id: string
+          offer_id: string | null
+          store_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          offer_id?: string | null
+          store_id?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          offer_id?: string | null
+          store_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clicks_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clicks_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      offers: {
+        Row: {
+          code: string | null
+          created_at: string
+          deal_type: string | null
+          description: string | null
+          discount_amount: number | null
+          discount_currency: string | null
+          discount_percent: number | null
+          discount_type: string | null
+          ends_at: string | null
+          id: string
+          impact_ad_id: string | null
+          impact_campaign_id: string | null
+          impact_status: string | null
+          is_active: boolean
+          is_exclusive: boolean
+          is_featured: boolean
+          kind: string
+          landing_page_url: string | null
+          last_synced_at: string | null
+          locked_by_admin: boolean
+          sort_order: number
+          source: string
+          starts_at: string | null
+          store_id: string | null
+          title: string
+          tracking_link: string | null
+          updated_at: string
+        }
+        Insert: {
+          code?: string | null
+          created_at?: string
+          deal_type?: string | null
+          description?: string | null
+          discount_amount?: number | null
+          discount_currency?: string | null
+          discount_percent?: number | null
+          discount_type?: string | null
+          ends_at?: string | null
+          id?: string
+          impact_ad_id?: string | null
+          impact_campaign_id?: string | null
+          impact_status?: string | null
+          is_active?: boolean
+          is_exclusive?: boolean
+          is_featured?: boolean
+          kind?: string
+          landing_page_url?: string | null
+          last_synced_at?: string | null
+          locked_by_admin?: boolean
+          sort_order?: number
+          source?: string
+          starts_at?: string | null
+          store_id?: string | null
+          title: string
+          tracking_link?: string | null
+          updated_at?: string
+        }
+        Update: {
+          code?: string | null
+          created_at?: string
+          deal_type?: string | null
+          description?: string | null
+          discount_amount?: number | null
+          discount_currency?: string | null
+          discount_percent?: number | null
+          discount_type?: string | null
+          ends_at?: string | null
+          id?: string
+          impact_ad_id?: string | null
+          impact_campaign_id?: string | null
+          impact_status?: string | null
+          is_active?: boolean
+          is_exclusive?: boolean
+          is_featured?: boolean
+          kind?: string
+          landing_page_url?: string | null
+          last_synced_at?: string | null
+          locked_by_admin?: boolean
+          sort_order?: number
+          source?: string
+          starts_at?: string | null
+          store_id?: string | null
+          title?: string
+          tracking_link?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offers_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          is_blocked: boolean
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+          is_blocked?: boolean
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          is_blocked?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      stores: {
+        Row: {
+          cashback_share: number | null
+          category_id: string | null
+          commission_rate: number | null
+          commission_type: string
+          created_at: string
+          description: string | null
+          display_rate_override: number | null
+          id: string
+          impact_advertiser_id: string | null
+          impact_campaign_id: string | null
+          impact_status: string | null
+          is_active: boolean
+          is_featured: boolean
+          last_synced_at: string | null
+          logo_url: string | null
+          name: string
+          rate_prefix: string
+          slug: string
+          sort_order: number
+          source: string
+          terms: string | null
+          tracking_link: string | null
+          updated_at: string
+          website_url: string | null
+        }
+        Insert: {
+          cashback_share?: number | null
+          category_id?: string | null
+          commission_rate?: number | null
+          commission_type?: string
+          created_at?: string
+          description?: string | null
+          display_rate_override?: number | null
+          id?: string
+          impact_advertiser_id?: string | null
+          impact_campaign_id?: string | null
+          impact_status?: string | null
+          is_active?: boolean
+          is_featured?: boolean
+          last_synced_at?: string | null
+          logo_url?: string | null
+          name: string
+          rate_prefix?: string
+          slug: string
+          sort_order?: number
+          source?: string
+          terms?: string | null
+          tracking_link?: string | null
+          updated_at?: string
+          website_url?: string | null
+        }
+        Update: {
+          cashback_share?: number | null
+          category_id?: string | null
+          commission_rate?: number | null
+          commission_type?: string
+          created_at?: string
+          description?: string | null
+          display_rate_override?: number | null
+          id?: string
+          impact_advertiser_id?: string | null
+          impact_campaign_id?: string | null
+          impact_status?: string | null
+          is_active?: boolean
+          is_featured?: boolean
+          last_synced_at?: string | null
+          logo_url?: string | null
+          name?: string
+          rate_prefix?: string
+          slug?: string
+          sort_order?: number
+          source?: string
+          terms?: string | null
+          tracking_link?: string | null
+          updated_at?: string
+          website_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stores_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sync_logs: {
+        Row: {
+          finished_at: string | null
+          id: string
+          kind: string
+          message: string | null
+          started_at: string
+          stats: Json
+          status: string
+          trigger: string
+        }
+        Insert: {
+          finished_at?: string | null
+          id?: string
+          kind: string
+          message?: string | null
+          started_at?: string
+          stats?: Json
+          status?: string
+          trigger?: string
+        }
+        Update: {
+          finished_at?: string | null
+          id?: string
+          kind?: string
+          message?: string | null
+          started_at?: string
+          stats?: Json
+          status?: string
+          trigger?: string
+        }
+        Relationships: []
+      }
+      transactions: {
+        Row: {
+          cashback_amount: number
+          click_id: string | null
+          commission_amount: number
+          created_at: string
+          currency: string
+          event_date: string
+          id: string
+          impact_action_id: string | null
+          impact_campaign_id: string | null
+          locked_by_admin: boolean
+          note: string | null
+          order_amount: number
+          source: string
+          status: string
+          store_id: string | null
+          store_name: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          cashback_amount?: number
+          click_id?: string | null
+          commission_amount?: number
+          created_at?: string
+          currency?: string
+          event_date?: string
+          id?: string
+          impact_action_id?: string | null
+          impact_campaign_id?: string | null
+          locked_by_admin?: boolean
+          note?: string | null
+          order_amount?: number
+          source?: string
+          status?: string
+          store_id?: string | null
+          store_name?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          cashback_amount?: number
+          click_id?: string | null
+          commission_amount?: number
+          created_at?: string
+          currency?: string
+          event_date?: string
+          id?: string
+          impact_action_id?: string | null
+          impact_campaign_id?: string | null
+          locked_by_admin?: boolean
+          note?: string | null
+          order_amount?: number
+          source?: string
+          status?: string
+          store_id?: string | null
+          store_name?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transactions_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      withdrawals: {
+        Row: {
+          admin_note: string | null
+          amount: number
+          created_at: string
+          details: Json
+          id: string
+          method: string
+          processed_at: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          admin_note?: string | null
+          amount: number
+          created_at?: string
+          details?: Json
+          id?: string
+          method: string
+          processed_at?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          admin_note?: string | null
+          amount?: number
+          created_at?: string
+          details?: Json
+          id?: string
+          method?: string
+          processed_at?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      admin_user_list: {
+        Args: never
+        Returns: {
+          approved: number
+          available: number
+          clicks: number
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          is_admin: boolean
+          is_blocked: boolean
+          pending: number
+          withdrawn: number
+        }[]
+      }
+      get_my_balance: {
+        Args: never
+        Returns: {
+          approved: number
+          available: number
+          pending: number
+          withdrawn: number
+        }[]
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      request_withdrawal: {
+        Args: { _amount: number; _details: Json; _method: string }
+        Returns: string
+      }
+      user_balance: {
+        Args: { _user_id: string }
+        Returns: {
+          approved: number
+          available: number
+          pending: number
+          withdrawn: number
+        }[]
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +652,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const
