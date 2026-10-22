@@ -10,33 +10,299 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as DealsRouteImport } from './routes/deals'
+import { Route as HowItWorksRouteImport } from './routes/how-it-works'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as GoSlugRouteImport } from './routes/go.$slug'
+import { Route as StoresIndexRouteImport } from './routes/stores.index'
+import { Route as StoresSlugRouteImport } from './routes/stores.$slug'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedAdminCategoriesRouteImport } from './routes/_authenticated/admin.categories'
+import { Route as AuthenticatedAdminOffersRouteImport } from './routes/_authenticated/admin.offers'
+import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
+import { Route as AuthenticatedAdminStoresRouteImport } from './routes/_authenticated/admin.stores'
+import { Route as AuthenticatedAdminSyncRouteImport } from './routes/_authenticated/admin.sync'
+import { Route as AuthenticatedAdminTransactionsRouteImport } from './routes/_authenticated/admin.transactions'
+import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
+import { Route as AuthenticatedAdminWithdrawalsRouteImport } from './routes/_authenticated/admin.withdrawals'
+import { Route as ApiPublicJobsImpactSyncRouteImport } from './routes/api/public/jobs/impact-sync'
+import { Route as ApiPublicStoreLogoCampaignIdRouteImport } from './routes/api/public/store-logo.$campaignId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DealsRoute = DealsRouteImport.update({
+  id: '/deals',
+  path: '/deals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HowItWorksRoute = HowItWorksRouteImport.update({
+  id: '/how-it-works',
+  path: '/how-it-works',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const GoSlugRoute = GoSlugRouteImport.update({
+  id: '/go/$slug',
+  path: '/go/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StoresIndexRoute = StoresIndexRouteImport.update({
+  id: '/stores/',
+  path: '/stores/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StoresSlugRoute = StoresSlugRouteImport.update({
+  id: '/stores/$slug',
+  path: '/stores/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminCategoriesRoute =
+  AuthenticatedAdminCategoriesRouteImport.update({
+    id: '/categories',
+    path: '/categories',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminOffersRoute =
+  AuthenticatedAdminOffersRouteImport.update({
+    id: '/offers',
+    path: '/offers',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminSettingsRoute =
+  AuthenticatedAdminSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminStoresRoute =
+  AuthenticatedAdminStoresRouteImport.update({
+    id: '/stores',
+    path: '/stores',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminSyncRoute = AuthenticatedAdminSyncRouteImport.update({
+  id: '/sync',
+  path: '/sync',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminTransactionsRoute =
+  AuthenticatedAdminTransactionsRouteImport.update({
+    id: '/transactions',
+    path: '/transactions',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminWithdrawalsRoute =
+  AuthenticatedAdminWithdrawalsRouteImport.update({
+    id: '/withdrawals',
+    path: '/withdrawals',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const ApiPublicJobsImpactSyncRoute = ApiPublicJobsImpactSyncRouteImport.update({
+  id: '/api/public/jobs/impact-sync',
+  path: '/api/public/jobs/impact-sync',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicStoreLogoCampaignIdRoute =
+  ApiPublicStoreLogoCampaignIdRouteImport.update({
+    id: '/api/public/store-logo/$campaignId',
+    path: '/api/public/store-logo/$campaignId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/deals': typeof DealsRoute
+  '/how-it-works': typeof HowItWorksRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/account': typeof AuthenticatedAccountRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/go/$slug': typeof GoSlugRoute
+  '/stores/$slug': typeof StoresSlugRoute
+  '/stores/': typeof StoresIndexRoute
+  '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
+  '/admin/offers': typeof AuthenticatedAdminOffersRoute
+  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin/stores': typeof AuthenticatedAdminStoresRoute
+  '/admin/sync': typeof AuthenticatedAdminSyncRoute
+  '/admin/transactions': typeof AuthenticatedAdminTransactionsRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/admin/withdrawals': typeof AuthenticatedAdminWithdrawalsRoute
+  '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/api/public/jobs/impact-sync': typeof ApiPublicJobsImpactSyncRoute
+  '/api/public/store-logo/$campaignId': typeof ApiPublicStoreLogoCampaignIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/deals': typeof DealsRoute
+  '/how-it-works': typeof HowItWorksRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/account': typeof AuthenticatedAccountRoute
+  '/go/$slug': typeof GoSlugRoute
+  '/stores/$slug': typeof StoresSlugRoute
+  '/stores': typeof StoresIndexRoute
+  '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
+  '/admin/offers': typeof AuthenticatedAdminOffersRoute
+  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin/stores': typeof AuthenticatedAdminStoresRoute
+  '/admin/sync': typeof AuthenticatedAdminSyncRoute
+  '/admin/transactions': typeof AuthenticatedAdminTransactionsRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/admin/withdrawals': typeof AuthenticatedAdminWithdrawalsRoute
+  '/admin': typeof AuthenticatedAdminIndexRoute
+  '/api/public/jobs/impact-sync': typeof ApiPublicJobsImpactSyncRoute
+  '/api/public/store-logo/$campaignId': typeof ApiPublicStoreLogoCampaignIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/deals': typeof DealsRoute
+  '/how-it-works': typeof HowItWorksRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/_authenticated/account': typeof AuthenticatedAccountRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/go/$slug': typeof GoSlugRoute
+  '/stores/$slug': typeof StoresSlugRoute
+  '/stores/': typeof StoresIndexRoute
+  '/_authenticated/admin/categories': typeof AuthenticatedAdminCategoriesRoute
+  '/_authenticated/admin/offers': typeof AuthenticatedAdminOffersRoute
+  '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/_authenticated/admin/stores': typeof AuthenticatedAdminStoresRoute
+  '/_authenticated/admin/sync': typeof AuthenticatedAdminSyncRoute
+  '/_authenticated/admin/transactions': typeof AuthenticatedAdminTransactionsRoute
+  '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/_authenticated/admin/withdrawals': typeof AuthenticatedAdminWithdrawalsRoute
+  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/api/public/jobs/impact-sync': typeof ApiPublicJobsImpactSyncRoute
+  '/api/public/store-logo/$campaignId': typeof ApiPublicStoreLogoCampaignIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/deals'
+    | '/how-it-works'
+    | '/reset-password'
+    | '/account'
+    | '/admin'
+    | '/go/$slug'
+    | '/stores/$slug'
+    | '/stores/'
+    | '/admin/categories'
+    | '/admin/offers'
+    | '/admin/settings'
+    | '/admin/stores'
+    | '/admin/sync'
+    | '/admin/transactions'
+    | '/admin/users'
+    | '/admin/withdrawals'
+    | '/admin/'
+    | '/api/public/jobs/impact-sync'
+    | '/api/public/store-logo/$campaignId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/deals'
+    | '/how-it-works'
+    | '/reset-password'
+    | '/account'
+    | '/go/$slug'
+    | '/stores/$slug'
+    | '/stores'
+    | '/admin/categories'
+    | '/admin/offers'
+    | '/admin/settings'
+    | '/admin/stores'
+    | '/admin/sync'
+    | '/admin/transactions'
+    | '/admin/users'
+    | '/admin/withdrawals'
+    | '/admin'
+    | '/api/public/jobs/impact-sync'
+    | '/api/public/store-logo/$campaignId'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/deals'
+    | '/how-it-works'
+    | '/reset-password'
+    | '/_authenticated/account'
+    | '/_authenticated/admin'
+    | '/go/$slug'
+    | '/stores/$slug'
+    | '/stores/'
+    | '/_authenticated/admin/categories'
+    | '/_authenticated/admin/offers'
+    | '/_authenticated/admin/settings'
+    | '/_authenticated/admin/stores'
+    | '/_authenticated/admin/sync'
+    | '/_authenticated/admin/transactions'
+    | '/_authenticated/admin/users'
+    | '/_authenticated/admin/withdrawals'
+    | '/_authenticated/admin/'
+    | '/api/public/jobs/impact-sync'
+    | '/api/public/store-logo/$campaignId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
+  DealsRoute: typeof DealsRoute
+  HowItWorksRoute: typeof HowItWorksRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
+  GoSlugRoute: typeof GoSlugRoute
+  StoresSlugRoute: typeof StoresSlugRoute
+  StoresIndexRoute: typeof StoresIndexRoute
+  ApiPublicJobsImpactSyncRoute: typeof ApiPublicJobsImpactSyncRoute
+  ApiPublicStoreLogoCampaignIdRoute: typeof ApiPublicStoreLogoCampaignIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +314,208 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/deals': {
+      id: '/deals'
+      path: '/deals'
+      fullPath: '/deals'
+      preLoaderRoute: typeof DealsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/how-it-works': {
+      id: '/how-it-works'
+      path: '/how-it-works'
+      fullPath: '/how-it-works'
+      preLoaderRoute: typeof HowItWorksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/account': {
+      id: '/_authenticated/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AuthenticatedAccountRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/go/$slug': {
+      id: '/go/$slug'
+      path: '/go/$slug'
+      fullPath: '/go/$slug'
+      preLoaderRoute: typeof GoSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stores/': {
+      id: '/stores/'
+      path: '/stores'
+      fullPath: '/stores/'
+      preLoaderRoute: typeof StoresIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stores/$slug': {
+      id: '/stores/$slug'
+      path: '/stores/$slug'
+      fullPath: '/stores/$slug'
+      preLoaderRoute: typeof StoresSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/categories': {
+      id: '/_authenticated/admin/categories'
+      path: '/categories'
+      fullPath: '/admin/categories'
+      preLoaderRoute: typeof AuthenticatedAdminCategoriesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/offers': {
+      id: '/_authenticated/admin/offers'
+      path: '/offers'
+      fullPath: '/admin/offers'
+      preLoaderRoute: typeof AuthenticatedAdminOffersRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/settings': {
+      id: '/_authenticated/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/stores': {
+      id: '/_authenticated/admin/stores'
+      path: '/stores'
+      fullPath: '/admin/stores'
+      preLoaderRoute: typeof AuthenticatedAdminStoresRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/sync': {
+      id: '/_authenticated/admin/sync'
+      path: '/sync'
+      fullPath: '/admin/sync'
+      preLoaderRoute: typeof AuthenticatedAdminSyncRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/transactions': {
+      id: '/_authenticated/admin/transactions'
+      path: '/transactions'
+      fullPath: '/admin/transactions'
+      preLoaderRoute: typeof AuthenticatedAdminTransactionsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/users': {
+      id: '/_authenticated/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/withdrawals': {
+      id: '/_authenticated/admin/withdrawals'
+      path: '/withdrawals'
+      fullPath: '/admin/withdrawals'
+      preLoaderRoute: typeof AuthenticatedAdminWithdrawalsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/api/public/jobs/impact-sync': {
+      id: '/api/public/jobs/impact-sync'
+      path: '/api/public/jobs/impact-sync'
+      fullPath: '/api/public/jobs/impact-sync'
+      preLoaderRoute: typeof ApiPublicJobsImpactSyncRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/store-logo/$campaignId': {
+      id: '/api/public/store-logo/$campaignId'
+      path: '/api/public/store-logo/$campaignId'
+      fullPath: '/api/public/store-logo/$campaignId'
+      preLoaderRoute: typeof ApiPublicStoreLogoCampaignIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
+interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminCategoriesRoute: typeof AuthenticatedAdminCategoriesRoute
+  AuthenticatedAdminOffersRoute: typeof AuthenticatedAdminOffersRoute
+  AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
+  AuthenticatedAdminStoresRoute: typeof AuthenticatedAdminStoresRoute
+  AuthenticatedAdminSyncRoute: typeof AuthenticatedAdminSyncRoute
+  AuthenticatedAdminTransactionsRoute: typeof AuthenticatedAdminTransactionsRoute
+  AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
+  AuthenticatedAdminWithdrawalsRoute: typeof AuthenticatedAdminWithdrawalsRoute
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+}
+
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminCategoriesRoute: AuthenticatedAdminCategoriesRoute,
+  AuthenticatedAdminOffersRoute: AuthenticatedAdminOffersRoute,
+  AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
+  AuthenticatedAdminStoresRoute: AuthenticatedAdminStoresRoute,
+  AuthenticatedAdminSyncRoute: AuthenticatedAdminSyncRoute,
+  AuthenticatedAdminTransactionsRoute: AuthenticatedAdminTransactionsRoute,
+  AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
+  AuthenticatedAdminWithdrawalsRoute: AuthenticatedAdminWithdrawalsRoute,
+  AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+}
+
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAccountRoute: typeof AuthenticatedAccountRoute
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAccountRoute: AuthenticatedAccountRoute,
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
+  DealsRoute: DealsRoute,
+  HowItWorksRoute: HowItWorksRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
+  GoSlugRoute: GoSlugRoute,
+  StoresSlugRoute: StoresSlugRoute,
+  StoresIndexRoute: StoresIndexRoute,
+  ApiPublicJobsImpactSyncRoute: ApiPublicJobsImpactSyncRoute,
+  ApiPublicStoreLogoCampaignIdRoute: ApiPublicStoreLogoCampaignIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
