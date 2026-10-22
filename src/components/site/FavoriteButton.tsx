@@ -16,7 +16,10 @@ export function FavoriteButton({ storeId, className, withLabel = false }: { stor
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
-        if (!signedIn) return navigate({ to: "/auth", search: { redirect: window.location.pathname } });
+        if (!signedIn) {
+          void navigate({ to: "/auth", search: { redirect: window.location.pathname } });
+          return;
+        }
         toggle(storeId);
       }}
       className={cn(

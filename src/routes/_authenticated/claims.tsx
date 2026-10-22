@@ -66,9 +66,9 @@ function ClaimsPage() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     const amt = Number(amount);
-    if (!storeId) return toast.error("Choose the store you shopped at");
-    if (!orderRef.trim() || orderRef.length > 100) return toast.error("Enter your order number");
-    if (!(amt > 0)) return toast.error("Enter the order amount");
+    if (!storeId) { toast.error("Choose the store you shopped at"); return; }
+    if (!orderRef.trim() || orderRef.length > 100) { toast.error("Enter your order number"); return; }
+    if (!(amt > 0)) { toast.error("Enter the order amount"); return; }
     setBusy(true);
     const { error } = await supabase.from("claims").insert({
       user_id: user!.id,
@@ -79,7 +79,7 @@ function ClaimsPage() {
       details: details.trim().slice(0, 2000) || null,
     });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Claim sent — we'll look into it");
     setOrderRef(""); setAmount(""); setDetails(""); setOrderDate(""); setStoreId("");
     qc.invalidateQueries({ queryKey: ["my-claims"] });
