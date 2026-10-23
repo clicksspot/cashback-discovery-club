@@ -6,6 +6,7 @@ import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Json } from "@/integrations/supabase/types";
 import { AdminHeader } from "@/components/admin/AdminHeader";
+import { ImpactCredentials } from "@/components/admin/ImpactCredentials";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,6 +16,13 @@ import { settingsQuery } from "@/lib/public.functions";
 import { PAYOUT_METHODS, type Settings } from "@/lib/settings";
 
 export const Route = createFileRoute("/_authenticated/admin/settings")({
+  head: () => ({ meta: [
+    { title: "Settings · CashLeaf Admin" },
+    { name: "description", content: "Manage CashLeaf settings, payouts and your private Impact connection." },
+    { property: "og:title", content: "Settings · CashLeaf Admin" },
+    { property: "og:description", content: "Manage CashLeaf settings, payouts and your private Impact connection." },
+    { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, { name: "robots", content: "noindex" },
+  ] }),
   component: AdminSettings,
 });
 
@@ -83,6 +91,7 @@ function AdminSettings() {
       </AdminHeader>
 
       <div className="space-y-6">
+        <ImpactCredentials />
         <Section title="Site & home page">
           <Field label="Site name"><Input value={f.site_name} onChange={(e) => set("site_name", e.target.value)} /></Field>
           <Field label="Support email"><Input type="email" value={f.support_email} onChange={(e) => set("support_email", e.target.value)} /></Field>
