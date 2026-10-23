@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { adminHead } from "@/lib/admin-head";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -23,6 +24,7 @@ type OfferRow = Database["public"]["Tables"]["offers"]["Row"];
 type OfferWithStore = OfferRow & { stores: { name: string; logo_url: string | null } | null };
 
 export const Route = createFileRoute("/_authenticated/admin/offers")({
+  head: () => adminHead("Deals & coupons", "Manage CashLeaf deals, coupons and exclusive offers."),
   component: AdminOffers,
 });
 

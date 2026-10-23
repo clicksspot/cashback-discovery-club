@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { adminHead } from "@/lib/admin-head";
 import { useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -13,6 +14,7 @@ import { formatMoney } from "@/lib/cashback";
 import { settingsQuery } from "@/lib/public.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/users")({
+  head: () => adminHead("Members", "Manage CashLeaf members and account access."),
   component: AdminUsers,
 });
 

@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { adminHead } from "@/lib/admin-head";
 import { useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -17,6 +18,7 @@ import { payoutLabel } from "@/lib/settings";
 import { settingsQuery } from "@/lib/public.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/withdrawals")({
+  head: () => adminHead("Withdrawals", "Review and process CashLeaf member withdrawal requests."),
   component: AdminWithdrawals,
 });
 

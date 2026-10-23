@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { adminHead } from "@/lib/admin-head";
 import { useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -10,6 +11,7 @@ import { formatMoney } from "@/lib/cashback";
 import { settingsQuery } from "@/lib/public.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/claims")({
+  head: () => adminHead("Missing cashback", "Review and resolve CashLeaf member cashback claims."),
   component: AdminClaims,
 });
 
