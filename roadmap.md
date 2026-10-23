@@ -8,6 +8,6 @@
 - [x] Admin: overview, stores, categories, transactions, withdrawals, users, settings, Impact sync
 - [x] Impact import code: stores (campaigns), commission rates (contracts), sales (actions)
 - [x] Automatic scheduled sync (every 6 hours)
-- [ ] Admin Settings: securely enter and replace Impact credentials
-- [ ] Verify admin navigation and credential security
+- [x] Admin Settings: securely enter and replace Impact credentials
+- [x] Verify admin navigation and credential security
 - [ ] First live Impact sync (waiting for real credentials)
