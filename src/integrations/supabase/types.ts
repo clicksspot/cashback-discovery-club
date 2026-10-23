@@ -180,6 +180,27 @@ export type Database = {
           },
         ]
       }
+      integration_credentials: {
+        Row: {
+          encrypted_credentials: string
+          provider: string
+          updated_at: string
+          updated_by: string
+        }
+        Insert: {
+          encrypted_credentials: string
+          provider: string
+          updated_at?: string
+          updated_by: string
+        }
+        Update: {
+          encrypted_credentials?: string
+          provider?: string
+          updated_at?: string
+          updated_by?: string
+        }
+        Relationships: []
+      }
       offers: {
         Row: {
           code: string | null
