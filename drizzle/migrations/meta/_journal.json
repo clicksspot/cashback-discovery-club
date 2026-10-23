@@ -22,6 +22,20 @@
       "when": 1792647109381,
       "tag": "0002_claim_referral",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1792727538039,
+      "tag": "0003_secure_impact_credentials",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1792727769294,
+      "tag": "0004_restrict_credential_table_access",
+      "breakpoints": true
     }
   ]
 }

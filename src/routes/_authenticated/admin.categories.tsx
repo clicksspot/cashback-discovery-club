@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { adminHead } from "@/lib/admin-head";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -14,6 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { slugify } from "@/lib/cashback";
 
 export const Route = createFileRoute("/_authenticated/admin/categories")({
+  head: () => adminHead("Categories", "Manage CashLeaf store categories and their visibility."),
   component: AdminCategories,
 });
 

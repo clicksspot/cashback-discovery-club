@@ -13,6 +13,13 @@ import { getImpactStatus, runSyncNow } from "@/lib/admin.functions";
 import { settingsQuery } from "@/lib/public.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/sync")({
+  head: () => ({ meta: [
+    { title: "Impact Sync · CashLeaf Admin" },
+    { name: "description", content: "Import Impact stores, rates, deals and sales into CashLeaf." },
+    { property: "og:title", content: "Impact Sync · CashLeaf Admin" },
+    { property: "og:description", content: "Import Impact stores, rates, deals and sales into CashLeaf." },
+    { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, { name: "robots", content: "noindex" },
+  ] }),
   component: AdminSync,
 });
 
@@ -101,12 +108,15 @@ function AdminSync() {
           <p className="text-sm text-muted-foreground">Impact connection</p>
           {status.isLoading ? (
             <Loader2 className="mt-2 h-5 w-5 animate-spin text-primary" />
+          ) : status.isError ? (
+            <p className="mt-2 text-sm text-destructive">Connection status unavailable. Please try again.</p>
           ) : configured ? (
             <p className="mt-2 flex items-center gap-2 font-semibold text-primary"><CheckCircle2 className="h-5 w-5" /> Connected</p>
           ) : (
             <div className="mt-2">
               <p className="flex items-center gap-2 font-semibold text-destructive"><XCircle className="h-5 w-5" /> Not connected</p>
-              <p className="mt-1 text-xs text-muted-foreground">Your Impact Account SID and Auth Token still need to be added.</p>
+              <p className="mt-1 text-xs text-muted-foreground">Add your Impact Account SID and Auth Token in Settings.</p>
+              <Button asChild variant="link" className="h-auto px-0"><Link to="/admin/settings">Add credentials</Link></Button>
             </div>
           )}
         </div>

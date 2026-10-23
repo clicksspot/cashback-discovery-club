@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { adminHead } from "@/lib/admin-head";
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,6 +11,7 @@ import { formatMoney } from "@/lib/cashback";
 import { settingsQuery } from "@/lib/public.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/")({
+  head: () => adminHead("Overview", "Monitor CashLeaf stores, members, cashback and payouts."),
   component: AdminOverview,
 });
 

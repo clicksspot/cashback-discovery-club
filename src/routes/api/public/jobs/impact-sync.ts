@@ -12,7 +12,7 @@ export const Route = createFileRoute("/api/public/jobs/impact-sync")({
         const kind = body.task === "stores" || body.task === "actions" || body.task === "offers" ? body.task : "all";
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const { runImpactSync, impactConfigured } = await import("@/lib/impact.server");
-        if (!impactConfigured()) return Response.json({ skipped: true, reason: "Impact not connected" });
+        if (!(await impactConfigured())) return Response.json({ skipped: true, reason: "Impact not connected" });
         try {
           const result = await runImpactSync(supabaseAdmin, kind, "cron");
           return Response.json({ success: true, ...result });

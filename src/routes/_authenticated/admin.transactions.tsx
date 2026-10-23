@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { adminHead } from "@/lib/admin-head";
 import { useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -22,6 +23,7 @@ import { settingsQuery } from "@/lib/public.functions";
 type Tx = Database["public"]["Tables"]["transactions"]["Row"];
 
 export const Route = createFileRoute("/_authenticated/admin/transactions")({
+  head: () => adminHead("Cashback & sales", "Review CashLeaf purchases and member cashback transactions."),
   component: AdminTransactions,
 });
 
