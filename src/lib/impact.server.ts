@@ -5,34 +5,66 @@ import { computeCashback, effectiveShare, slugify } from "./cashback";
 import { parseSettings, type Settings } from "./settings";
 import { fetchAllRows } from "./fetch-all";
 import { extractCode, extractDiscount, isExpired, isPlaceholderAd, offerTitle } from "./offers";
+import { decryptCredentials, encryptCredentials } from "./credential-encryption.server";
 
 type Admin = SupabaseClient<Database>;
 type Json = Record<string, unknown>;
 
 const BASE = "https://api.impact.com";
 
-export function impactConfigured() {
-  return !!process.env["IMPACT_ACCOUNT_SID"] && !!process.env["IMPACT_AUTH_TOKEN"];
+export async function impactConfigured() {
+  return !!(await readCredentials());
 }
 
-function creds() {
+async function readCredentials() {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data, error } = await supabaseAdmin.from("integration_credentials").select("encrypted_credentials").eq("provider", "impact").maybeSingle();
+  if (error) throw new Error("Impact connection status is unavailable. Please try again.");
+  if (data) return decryptCredentials(data.encrypted_credentials, process.env["IMPACT_CREDENTIAL_ENCRYPTION_KEY"] ?? "");
   const sid = process.env["IMPACT_ACCOUNT_SID"];
   const token = process.env["IMPACT_AUTH_TOKEN"];
+  return sid && token ? { sid, token } : null;
+}
+
+async function creds() {
+  const value = await readCredentials();
+  const { sid, token } = value ?? {};
   if (!sid || !token) throw new Error("Impact API credentials are not set yet.");
   return { sid, auth: "Basic " + btoa(`${sid}:${token}`) };
 }
 
+export async function saveImpactCredentials(value: { sid: string; token: string }, userId: string) {
+  // Validate against Impact before replacing a working connection. Never surface its response body.
+  const response = await fetch(`${BASE}/Mediapartners/${encodeURIComponent(value.sid)}/Campaigns?PageSize=1`, {
+    headers: { Authorization: "Basic " + btoa(`${value.sid}:${value.token}`), Accept: "application/json" },
+    redirect: "error", signal: AbortSignal.timeout(15000),
+  }).catch(() => null);
+  if (!response) throw new Error("Impact could not be reached. Please try again; your saved connection was not changed.");
+  if (!response.ok) throw new Error(response.status === 401 || response.status === 403
+    ? "Impact rejected these credentials. Check your Account SID, Auth Token and API permissions."
+    : "Impact could not verify these credentials. Please try again; your saved connection was not changed.");
+  const encrypted = await encryptCredentials(value, process.env["IMPACT_CREDENTIAL_ENCRYPTION_KEY"] ?? "");
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { error } = await supabaseAdmin.from("integration_credentials").upsert({ provider: "impact", encrypted_credentials: encrypted, updated_by: userId, updated_at: new Date().toISOString() });
+  if (error) throw new Error("Impact credentials could not be saved. Please try again.");
+}
+
+export async function impactLogo(campaignId: string) {
+  const { sid } = await creds();
+  return impactRaw(`/Mediapartners/${sid}/Campaigns/${campaignId}/Logo`, "*/*");
+}
+
 export async function impactRaw(path: string, accept = "application/json"): Promise<Response> {
-  const { auth } = creds();
+  const { auth } = await creds();
   const url = path.startsWith("http") ? path : BASE + path;
-  return fetch(url, { headers: { Authorization: auth, Accept: accept } });
+  if (new URL(url).origin !== BASE) throw new Error("Invalid Impact API destination.");
+  return fetch(url, { headers: { Authorization: auth, Accept: accept }, redirect: "error" });
 }
 
 async function impactJson(path: string): Promise<Json> {
   const res = await impactRaw(path);
   if (!res.ok) {
-    const body = await res.text().catch(() => "");
-    throw new Error(`Impact API ${res.status}: ${body.slice(0, 200)}`);
+    throw new Error(`Impact API request failed (${res.status}). Check your connection and API permissions in Settings.`);
   }
   return (await res.json()) as Json;
 }
@@ -89,7 +121,7 @@ export async function loadSettings(admin: Admin): Promise<Settings> {
 }
 
 export async function syncStores(admin: Admin, settings: Settings) {
-  const { sid } = creds();
+  const { sid } = await creds();
   const campaigns = await impactList(`/Mediapartners/${sid}/Campaigns?PageSize=1000`, "Campaigns");
 
   const rates = new Map<string, { type: "percent" | "flat"; rate: number }>();
@@ -211,7 +243,7 @@ function impactDate(d: Date) {
 }
 
 export async function syncActions(admin: Admin, settings: Settings) {
-  const { sid } = creds();
+  const { sid } = await creds();
   const days = Math.min(Math.max(Math.round(settings.actions_lookback_days) || 30, 1), 180);
   const end = new Date();
   const actions: Json[] = [];
@@ -289,7 +321,7 @@ export async function syncActions(admin: Admin, settings: Settings) {
 type OfferInsert = Database["public"]["Tables"]["offers"]["Insert"];
 
 export async function syncOffers(admin: Admin, settings: Settings) {
-  const { sid } = creds();
+  const { sid } = await creds();
   const ads = await impactList(`/Mediapartners/${sid}/Ads?Type=COUPON&PageSize=1000`, "Ads");
   let promoCodes: Json[] = [];
   let promoWarning: string | null = null;
