@@ -10,4 +10,4 @@
 - [x] Automatic scheduled sync (every 6 hours)
 - [x] Admin Settings: securely enter and replace Impact credentials
 - [x] Verify admin navigation and credential security
-- [ ] First live Impact sync (waiting for real credentials)
+- [ ] First live Impact sync (credentials saved; checking import timeout)

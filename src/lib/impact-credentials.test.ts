@@ -2,11 +2,35 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { assertAdmin } from "./admin-access";
 import { encryptCredentials, decryptCredentials } from "./credential-encryption.server";
-import { saveImpactCredentials } from "./impact.server";
+import { impactList, saveImpactCredentials } from "./impact.server";
 
 const { upsert, from } = vi.hoisted(() => {
   const upsert = vi.fn();
-  return { upsert, from: vi.fn(() => ({ upsert })) };
+  return { upsert, from: vi.fn(() => ({ upsert, select: () => ({ eq: () => ({ maybeSingle: async () => ({ data: null, error: null }) }) }) })) };
+});
+
+describe("Impact paginated imports", () => {
+  it("requests 100 rows on every page and retains all rows and filters", async () => {
+    vi.stubEnv("IMPACT_ACCOUNT_SID", "test-account");
+    vi.stubEnv("IMPACT_AUTH_TOKEN", "test-token-not-a-real-credential");
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ Campaigns: [{ Id: "first" }], "@nextpageuri": "/Mediapartners/test-account/Campaigns?Page=2&PageSize=1000&State=ACTIVE" })))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ Campaigns: [{ Id: "second" }] })));
+    vi.stubGlobal("fetch", fetchMock);
+    expect(await impactList("/Mediapartners/test-account/Campaigns?PageSize=1000&State=ACTIVE", "Campaigns")).toEqual([{ Id: "first" }, { Id: "second" }]);
+    for (const call of fetchMock.mock.calls) {
+      const url = new URL(call[0]);
+      expect(url.searchParams.get("PageSize")).toBe("100");
+      expect(url.searchParams.get("State")).toBe("ACTIVE");
+    }
+    expect(new URL(fetchMock.mock.calls[1]?.[0]).searchParams.get("Page")).toBe("2");
+  });
+  it("rejects truncated feeds rather than returning rows for destructive reconciliation", async () => {
+    vi.stubEnv("IMPACT_ACCOUNT_SID", "test-account");
+    vi.stubEnv("IMPACT_AUTH_TOKEN", "test-token-not-a-real-credential");
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({ Campaigns: [{ Id: "first" }], "@nextpageuri": "/Mediapartners/test-account/Campaigns?Page=2" }))));
+    await expect(impactList("/Mediapartners/test-account/Campaigns", "Campaigns", 1)).rejects.toThrow("No incomplete feed was saved");
+  });
 });
 vi.mock("@/integrations/supabase/client.server", () => ({ supabaseAdmin: { from } }));
 afterEach(() => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); vi.clearAllMocks(); });

@@ -14,6 +14,7 @@ const BASE = "https://api.impact.com";
 
 // Follow only same-origin redirects; never forward private credentials elsewhere.
 async function requestImpact(path: string, auth: string, accept = "application/json"): Promise<Response> {
+  const resource = new URL(path, BASE).pathname.split("/")[3] ?? "request";
   for (let attempt = 0; attempt < 2; attempt++) {
     let url = new URL(path, BASE);
     const controller = new AbortController();
@@ -30,8 +31,8 @@ async function requestImpact(path: string, auth: string, accept = "application/j
         } catch {
           if (attempt === 0) break;
           throw new Error(controller.signal.aborted
-            ? "Impact verification timed out. Please try again; your saved connection was not changed."
-            : "A network connection to Impact could not be established after retrying. Please try again; your saved connection was not changed.");
+            ? `Impact ${resource} request timed out after retrying. Your credentials are still saved; please retry the sync.`
+            : `A network connection to Impact could not be established after retrying (${resource}). Your credentials are still saved.`);
         }
         if (![301, 302, 303, 307, 308].includes(response.status)) return response;
         const location = response.headers.get("Location");
@@ -99,16 +100,21 @@ async function impactJson(path: string): Promise<Json> {
   return (await res.json()) as Json;
 }
 
-async function impactList(firstPath: string, key: string, maxPages = 40): Promise<Json[]> {
+export async function impactList(firstPath: string, key: string, maxPages = 400): Promise<Json[]> {
   const out: Json[] = [];
   let path: string | null = firstPath;
   for (let i = 0; path && i < maxPages; i++) {
-    const json = await impactJson(path);
+    // Smaller pages avoid expensive bulk responses. Preserve filters on every next-page URL.
+    const page = new URL(path, BASE);
+    page.searchParams.set("PageSize", "100");
+    const json = await impactJson(page.href);
     const items = json[key];
     if (Array.isArray(items)) out.push(...(items as Json[]));
     const next = json["@nextpageuri"];
     path = typeof next === "string" && next.length > 0 ? next : null;
   }
+  // Never treat a truncated feed as complete: doing so could hide valid stores/offers.
+  if (path) throw new Error(`Impact ${key} import exceeded the page limit. No incomplete feed was saved.`);
   return out;
 }
 
@@ -152,12 +158,12 @@ export async function loadSettings(admin: Admin): Promise<Settings> {
 
 export async function syncStores(admin: Admin, settings: Settings) {
   const { sid } = await creds();
-  const campaigns = await impactList(`/Mediapartners/${sid}/Campaigns?PageSize=1000`, "Campaigns");
+  const campaigns = await impactList(`/Mediapartners/${sid}/Campaigns?PageSize=100`, "Campaigns");
 
   const rates = new Map<string, { type: "percent" | "flat"; rate: number }>();
   let contractsError: string | null = null;
   try {
-    const contracts = await impactList(`/Mediapartners/${sid}/Contracts?PageSize=1000`, "Contracts");
+    const contracts = await impactList(`/Mediapartners/${sid}/Contracts?PageSize=100`, "Contracts");
     for (const c of contracts) {
       const id = str(c["CampaignId"]);
       const p = extractPayout(c);
@@ -281,7 +287,7 @@ export async function syncActions(admin: Admin, settings: Settings) {
   for (let offset = 0; offset < days; offset += 30) {
     const winEnd = new Date(end.getTime() - offset * 86400000);
     const winStart = new Date(end.getTime() - Math.min(offset + 30, days) * 86400000);
-    const path = `/Mediapartners/${sid}/Actions?ActionDateStart=${encodeURIComponent(impactDate(winStart))}&ActionDateEnd=${encodeURIComponent(impactDate(winEnd))}&PageSize=1000`;
+    const path = `/Mediapartners/${sid}/Actions?ActionDateStart=${encodeURIComponent(impactDate(winStart))}&ActionDateEnd=${encodeURIComponent(impactDate(winEnd))}&PageSize=100`;
     actions.push(...(await impactList(path, "Actions")));
   }
 
@@ -352,11 +358,11 @@ type OfferInsert = Database["public"]["Tables"]["offers"]["Insert"];
 
 export async function syncOffers(admin: Admin, settings: Settings) {
   const { sid } = await creds();
-  const ads = await impactList(`/Mediapartners/${sid}/Ads?Type=COUPON&PageSize=1000`, "Ads");
+  const ads = await impactList(`/Mediapartners/${sid}/Ads?Type=COUPON&PageSize=100`, "Ads");
   let promoCodes: Json[] = [];
   let promoWarning: string | null = null;
   try {
-    promoCodes = await impactList(`/Mediapartners/${sid}/PromoCodes?PageSize=1000`, "PromoCodes");
+    promoCodes = await impactList(`/Mediapartners/${sid}/PromoCodes?PageSize=100`, "PromoCodes");
   } catch (e) {
     promoWarning = e instanceof Error ? e.message : String(e);
   }
