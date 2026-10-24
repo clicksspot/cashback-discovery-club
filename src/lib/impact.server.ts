@@ -12,6 +12,42 @@ type Json = Record<string, unknown>;
 
 const BASE = "https://api.impact.com";
 
+// Follow only same-origin redirects; never forward private credentials elsewhere.
+async function requestImpact(path: string, auth: string, accept = "application/json"): Promise<Response> {
+  for (let attempt = 0; attempt < 2; attempt++) {
+    let url = new URL(path, BASE);
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 30000);
+    try {
+      for (let hop = 0; hop <= 3; hop++) {
+        if (url.origin !== BASE || url.username || url.password) throw new Error("Invalid Impact API destination.");
+        let response: Response;
+        try {
+          response = await fetch(url.href, {
+            headers: { Authorization: auth, Accept: accept },
+            redirect: "manual", signal: controller.signal,
+          });
+        } catch {
+          if (attempt === 0) break;
+          throw new Error(controller.signal.aborted
+            ? "Impact verification timed out. Please try again; your saved connection was not changed."
+            : "A network connection to Impact could not be established after retrying. Please try again; your saved connection was not changed.");
+        }
+        if (![301, 302, 303, 307, 308].includes(response.status)) return response;
+        const location = response.headers.get("Location");
+        await response.body?.cancel();
+        if (!location || hop === 3) throw new Error("Impact returned an unexpected redirect. Your saved connection was not changed.");
+        try { url = new URL(location, url); } catch {
+          throw new Error("Impact returned an unexpected redirect. Your saved connection was not changed.");
+        }
+      }
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+  throw new Error("Impact could not be reached. Your saved connection was not changed.");
+}
+
 export async function impactConfigured() {
   return !!(await readCredentials());
 }
@@ -35,11 +71,7 @@ async function creds() {
 
 export async function saveImpactCredentials(value: { sid: string; token: string }, userId: string) {
   // Validate against Impact before replacing a working connection. Never surface its response body.
-  const response = await fetch(`${BASE}/Mediapartners/${encodeURIComponent(value.sid)}/Campaigns?PageSize=1`, {
-    headers: { Authorization: "Basic " + btoa(`${value.sid}:${value.token}`), Accept: "application/json" },
-    redirect: "error", signal: AbortSignal.timeout(15000),
-  }).catch(() => null);
-  if (!response) throw new Error("Impact could not be reached. Please try again; your saved connection was not changed.");
+  const response = await requestImpact(`/Mediapartners/${encodeURIComponent(value.sid)}/Campaigns?PageSize=1`, "Basic " + btoa(`${value.sid}:${value.token}`));
   if (!response.ok) throw new Error(response.status === 401 || response.status === 403
     ? "Impact rejected these credentials. Check your Account SID, Auth Token and API permissions."
     : "Impact could not verify these credentials. Please try again; your saved connection was not changed.");
@@ -56,9 +88,7 @@ export async function impactLogo(campaignId: string) {
 
 export async function impactRaw(path: string, accept = "application/json"): Promise<Response> {
   const { auth } = await creds();
-  const url = path.startsWith("http") ? path : BASE + path;
-  if (new URL(url).origin !== BASE) throw new Error("Invalid Impact API destination.");
-  return fetch(url, { headers: { Authorization: auth, Accept: accept }, redirect: "error" });
+  return requestImpact(path, auth, accept);
 }
 
 async function impactJson(path: string): Promise<Json> {
