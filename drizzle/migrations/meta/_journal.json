@@ -36,6 +36,13 @@
       "when": 1792727769294,
       "tag": "0004_restrict_credential_table_access",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1792807158440,
+      "tag": "0005_impact_store_details",
+      "breakpoints": true
     }
   ]
 }
