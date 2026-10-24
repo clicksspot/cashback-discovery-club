@@ -48,4 +48,37 @@ describe("confidential Impact credential storage", () => {
     await expect(saveImpactCredentials(fixture, "test-admin")).rejects.toThrow("Impact rejected");
     expect(upsert).not.toHaveBeenCalled();
   });
+  it("retries a transient network failure before saving verified credentials", async () => {
+    vi.stubEnv("IMPACT_CREDENTIAL_ENCRYPTION_KEY", "test-encryption-key-not-a-real-secret");
+    const fetchMock = vi.fn().mockRejectedValueOnce(new TypeError("fetch failed")).mockResolvedValueOnce(new Response("{}", { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+    upsert.mockResolvedValue({ error: null });
+    await saveImpactCredentials(fixture, "test-admin");
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(upsert).toHaveBeenCalledTimes(1);
+  });
+  it("follows an Impact same-origin redirect before verification", async () => {
+    vi.stubEnv("IMPACT_CREDENTIAL_ENCRYPTION_KEY", "test-encryption-key-not-a-real-secret");
+    const fetchMock = vi.fn().mockResolvedValueOnce(new Response(null, { status: 302, headers: { Location: "/Mediapartners/test-account/Campaigns/?PageSize=1" } })).mockResolvedValueOnce(new Response("{}", { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+    upsert.mockResolvedValue({ error: null });
+    await saveImpactCredentials(fixture, "test-admin");
+    expect(fetchMock.mock.calls[1]?.[0]).toBe("https://api.impact.com/Mediapartners/test-account/Campaigns/?PageSize=1");
+    expect(fetchMock.mock.calls[0]?.[1].redirect).toBe("manual");
+    expect(upsert).toHaveBeenCalledTimes(1);
+  });
+  it("never forwards credentials to another origin or saves them after an unsafe redirect", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response(null, { status: 302, headers: { Location: "https://untrusted.example/collect" } }));
+    vi.stubGlobal("fetch", fetchMock);
+    await expect(saveImpactCredentials(fixture, "test-admin")).rejects.toThrow("Invalid Impact API destination");
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(upsert).not.toHaveBeenCalled();
+  });
+  it("preserves saved credentials and hides provider details after repeated network failures", async () => {
+    const fetchMock = vi.fn().mockRejectedValue(new TypeError("private provider detail"));
+    vi.stubGlobal("fetch", fetchMock);
+    await expect(saveImpactCredentials(fixture, "test-admin")).rejects.toThrow("after retrying");
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(upsert).not.toHaveBeenCalled();
+  });
 });
