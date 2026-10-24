@@ -1,0 +1,2 @@
+ALTER TABLE public.stores ADD COLUMN impact_details jsonb NOT NULL DEFAULT '{}'::jsonb;
+COMMENT ON COLUMN public.stores.impact_details IS 'Allowlisted public Impact program details. Shipping regions indicate physical-product shipping destinations, not cashback eligibility or headquarters.';

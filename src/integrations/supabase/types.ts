@@ -344,6 +344,7 @@ export type Database = {
           id: string
           impact_advertiser_id: string | null
           impact_campaign_id: string | null
+          impact_details: Json
           impact_status: string | null
           is_active: boolean
           is_featured: boolean
@@ -371,6 +372,7 @@ export type Database = {
           id?: string
           impact_advertiser_id?: string | null
           impact_campaign_id?: string | null
+          impact_details?: Json
           impact_status?: string | null
           is_active?: boolean
           is_featured?: boolean
@@ -398,6 +400,7 @@ export type Database = {
           id?: string
           impact_advertiser_id?: string | null
           impact_campaign_id?: string | null
+          impact_details?: Json
           impact_status?: string | null
           is_active?: boolean
           is_featured?: boolean
