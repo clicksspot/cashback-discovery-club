@@ -17,19 +17,19 @@ export function readImpactDetails(value: unknown): ImpactDetails {
   if (!value || typeof value !== "object" || Array.isArray(value)) return {};
   const record = value as Record<string, unknown>;
   return {
-    ...(typeof record.description === "string" && record.description.trim() ? { description: record.description.trim() } : {}),
-    ...(safeWebsite(record.advertiser_url) ? { advertiser_url: safeWebsite(record.advertiser_url) ?? undefined } : {}),
-    ...(safeWebsite(record.campaign_url) ? { campaign_url: safeWebsite(record.campaign_url) ?? undefined } : {}),
-    ...(Array.isArray(record.shipping_regions) ? { shipping_regions: [...new Set(record.shipping_regions.filter((r): r is string => typeof r === "string" && !!r.trim()).map((r) => r.trim().toUpperCase()))] } : {}),
+    ...(typeof record["description"] === "string" && record["description"].trim() ? { description: record["description"].trim() } : {}),
+    ...(safeWebsite(record["advertiser_url"]) ? { advertiser_url: safeWebsite(record["advertiser_url"]) ?? undefined } : {}),
+    ...(safeWebsite(record["campaign_url"]) ? { campaign_url: safeWebsite(record["campaign_url"]) ?? undefined } : {}),
+    ...(Array.isArray(record["shipping_regions"]) ? { shipping_regions: [...new Set(record["shipping_regions"].filter((r): r is string => typeof r === "string" && !!r.trim()).map((r) => r.trim().toUpperCase()))] } : {}),
   };
 }
 
 export function extractImpactDetails(campaign: Record<string, unknown>): ImpactDetails {
   return readImpactDetails({
-    description: campaign.CampaignDescription,
-    advertiser_url: campaign.AdvertiserUrl,
-    campaign_url: campaign.CampaignUrl,
-    shipping_regions: campaign.ShippingRegions,
+    description: campaign["CampaignDescription"],
+    advertiser_url: campaign["AdvertiserUrl"],
+    campaign_url: campaign["CampaignUrl"],
+    shipping_regions: campaign["ShippingRegions"],
   });
 }
 
