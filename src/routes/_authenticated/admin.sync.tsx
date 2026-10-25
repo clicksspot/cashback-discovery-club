@@ -33,8 +33,6 @@ const STAT_LABELS: Record<string, string> = {
   hidden_stores: "Stores hidden (no longer approved)",
   rates_found: "Commission rates found",
   rates_warning: "Rate warning",
-  stores_with_shipping: "Stores with shipping countries",
-  stores_with_description: "Stores with descriptions",
   sales_found: "Sales found",
   saved: "Sales saved",
   matched_to_members: "Linked to members",
