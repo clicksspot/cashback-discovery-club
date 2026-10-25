@@ -6,7 +6,7 @@ import { parseSettings } from "./settings";
 import { fetchAllRows } from "./fetch-all";
 
 export const STORE_COLUMNS =
-  "id, name, slug, logo_url, website_url, description, terms, category_id, commission_type, commission_rate, cashback_share, display_rate_override, rate_prefix, is_featured, sort_order, tracking_link, previous_rate";
+  "id, name, slug, logo_url, website_url, description, terms, category_id, commission_type, commission_rate, cashback_share, display_rate_override, rate_prefix, is_featured, sort_order, tracking_link, previous_rate, impact_details";
 
 export type PublicStore = {
   id: string;
@@ -26,6 +26,7 @@ export type PublicStore = {
   sort_order: number;
   tracking_link: string | null;
   previous_rate: number | null;
+  impact_details?: unknown;
 };
 
 export type PublicCategory = { id: string; name: string; slug: string; icon: string | null; sort_order: number };
