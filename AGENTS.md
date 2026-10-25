@@ -18,3 +18,4 @@
 - Site-wide admin settings are key/value rows in `app_settings`, typed and defaulted in `src/lib/settings.ts`. Why: admins can change any setting without schema changes.
 - Withdrawals are created only through the `request_withdrawal` database function. Why: balance and minimum checks must be atomic and server-enforced.
 - Public pages read data through server functions in `src/lib/public.functions.ts`; signed-in and admin pages use the browser client under row-level security.
+- Impact store metadata is allowlisted and normalized in `src/lib/impact-details.ts`; retain admin descriptions and label shipping regions separately from cashback eligibility. Why: provider metadata must remain safe and must not imply unsupported availability.

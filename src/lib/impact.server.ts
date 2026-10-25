@@ -6,6 +6,7 @@ import { parseSettings, type Settings } from "./settings";
 import { fetchAllRows } from "./fetch-all";
 import { extractCode, extractDiscount, isExpired, isPlaceholderAd, offerTitle } from "./offers";
 import { decryptCredentials, encryptCredentials } from "./credential-encryption.server";
+import { extractImpactDetails, readImpactDetails, safeWebsite } from "./impact-details";
 
 type Admin = SupabaseClient<Database>;
 type Json = Record<string, unknown>;
@@ -176,7 +177,7 @@ export async function syncStores(admin: Admin, settings: Settings) {
   const existing = await fetchAllRows((from, to) =>
     admin
       .from("stores")
-      .select("id, impact_campaign_id, name, slug, logo_url, commission_type, commission_rate, impact_status")
+      .select("id, impact_campaign_id, name, slug, logo_url, commission_type, commission_rate, impact_status, website_url, impact_details")
       .range(from, to),
   );
   const byCampaign = new Map(existing.filter((s) => s.impact_campaign_id).map((s) => [s.impact_campaign_id!, s]));
@@ -199,6 +200,8 @@ export async function syncStores(admin: Admin, settings: Settings) {
     const ex = byCampaign.get(campaignId);
     const trackingLink = str(c["TrackingLink"]) || null;
     const logo = `/api/public/store-logo/${campaignId}`;
+    const details = extractImpactDetails(c);
+    const website = details.advertiser_url ?? details.campaign_url;
     if (ex) {
       updates.push({
         impact_campaign_id: campaignId,
@@ -206,7 +209,8 @@ export async function syncStores(admin: Admin, settings: Settings) {
         slug: ex.slug,
         impact_advertiser_id: str(c["AdvertiserId"]) || null,
         tracking_link: trackingLink,
-        website_url: str(c["CampaignUrl"]) || null,
+        website_url: website ?? safeWebsite(ex.website_url),
+        impact_details: { ...readImpactDetails(ex.impact_details), ...details },
         logo_url: ex.logo_url ?? logo,
         commission_type: rate?.type ?? ex.commission_type,
         commission_rate: rate?.rate ?? ex.commission_rate,
@@ -223,8 +227,9 @@ export async function syncStores(admin: Admin, settings: Settings) {
         impact_advertiser_id: str(c["AdvertiserId"]) || null,
         name,
         slug,
-        description: str(c["CampaignDescription"]) || null,
-        website_url: str(c["CampaignUrl"]) || null,
+        description: details.description ?? null,
+        website_url: website ?? null,
+        impact_details: { ...details },
         tracking_link: trackingLink,
         logo_url: logo,
         commission_type: rate?.type ?? "percent",

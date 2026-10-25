@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { ArrowRight, CheckCircle2, Clock, ExternalLink, ShieldCheck } from "lucide-react";
+import { ArrowRight, CheckCircle2, Clock, ExternalLink, Globe2, ShieldCheck } from "lucide-react";
 import { SiteShell } from "@/components/site/SiteShell";
 import { StoreLogo } from "@/components/site/StoreLogo";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,7 @@ import { OfferCard } from "@/components/site/OfferCard";
 import { FavoriteButton } from "@/components/site/FavoriteButton";
 import { previousRateLabel } from "@/components/site/StoreCard";
 import { formatRate } from "@/lib/cashback";
+import { countryLabel, readImpactDetails, safeWebsite } from "@/lib/impact-details";
 
 export const Route = createFileRoute("/stores/$slug")({
   loader: async ({ context, params }) => {
@@ -57,6 +58,10 @@ function StorePage() {
   const rate = formatRate(store, settings.default_cashback_percent, settings.currency);
   const was = previousRateLabel(store, settings);
   const showOffers = settings.show_deals && offers.length > 0;
+  const details = readImpactDetails(store.impact_details);
+  const description = store.description || details.description;
+  const website = details.advertiser_url ?? safeWebsite(store.website_url);
+  const countries = (details.shipping_regions ?? []).map(countryLabel).sort((a, b) => a.localeCompare(b));
 
   return (
     <SiteShell>
@@ -95,17 +100,28 @@ function StorePage() {
               </div>
             </div>
           )}
-          {store.description && (
-            <div className="rounded-2xl border border-border bg-card p-7 shadow-card">
+          {(description || website) && (
+            <div className="border-b border-border pb-7">
               <h2 className="text-xl font-bold">About {store.name}</h2>
-              <p className="mt-3 whitespace-pre-line text-muted-foreground">{store.description}</p>
-              {store.website_url && (
-                <p className="mt-4 flex items-center gap-1 text-sm text-muted-foreground">
-                  <ExternalLink className="h-4 w-4" /> {store.website_url.replace(/^https?:\/\//, "")}
-                </p>
+              {description && <p className="mt-3 whitespace-pre-line break-words text-muted-foreground">{description}</p>}
+              {website && (
+                <Button asChild variant="link" className="mt-3 h-auto max-w-full justify-start whitespace-normal px-0 text-left">
+                  <a href={website} target="_blank" rel="noopener noreferrer"><ExternalLink className="h-4 w-4 shrink-0" /><span className="break-all">{new URL(website).hostname}</span></a>
+                </Button>
               )}
             </div>
           )}
+          <section className="border-b border-border pb-7">
+            <h2 className="flex items-center gap-2 text-xl font-bold"><Globe2 className="h-5 w-5 text-primary" /> Shipping countries</h2>
+            {countries.length > 0 ? (
+              <>
+                <ul className="mt-4 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
+                  {countries.map((country) => <li key={country} className="break-words text-foreground">{country}</li>)}
+                </ul>
+                <p className="mt-4 text-xs text-muted-foreground">Shipping destinations reported by the brand through Impact. Delivery restrictions may apply; check the store before ordering. A listed country does not guarantee cashback eligibility.</p>
+              </>
+            ) : <p className="mt-3 text-sm text-muted-foreground">This store has not provided shipping countries through Impact. Check its website for delivery availability.</p>}
+          </section>
           <div className="rounded-2xl border border-border bg-card p-7 shadow-card">
             <h2 className="text-xl font-bold">Cashback terms</h2>
             <ul className="mt-4 space-y-3 text-sm text-muted-foreground">

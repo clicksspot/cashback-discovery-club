@@ -11,4 +11,4 @@
 - [x] Admin Settings: securely enter and replace Impact credentials
 - [x] Verify admin navigation and credential security
 - [x] First live Impact sync (verified through admin: 553 stores, 1,352 offers; sales checked)
-- [ ] Import documented Impact store details and countries; verify on a live store page
+- [x] Import documented Impact store details and countries; verified 553 descriptions and 549 stores with shipping countries, including a live store page
