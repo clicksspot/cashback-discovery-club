@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { StoreLogo } from "./StoreLogo";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { discountLabel } from "@/lib/offers";
+import { concealCouponCode, discountLabel } from "@/lib/offers";
 import { formatRate } from "@/lib/cashback";
 import type { PublicOffer } from "@/lib/public.functions";
 import type { Settings } from "@/lib/settings";
@@ -27,6 +27,8 @@ export function OfferCard({ offer, settings, showStore = true }: { offer: Public
   const cashback = formatRate(offer.stores, settings.default_cashback_percent, settings.currency);
   const goSearch = { offer: offer.id };
   const isCode = !!offer.code;
+  const title = concealCouponCode(offer.title, offer.code);
+  const description = concealCouponCode(offer.description ?? "", offer.code);
 
   const reveal = async () => {
     setOpen(true);
@@ -58,8 +60,8 @@ export function OfferCard({ offer, settings, showStore = true }: { offer: Public
             </span>
           )}
         </div>
-        <h3 className="mt-1.5 line-clamp-2 text-base font-bold leading-snug">{offer.title}</h3>
-        {offer.description && <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{offer.description}</p>}
+        <h3 className="mt-1.5 line-clamp-2 text-base font-bold leading-snug">{title}</h3>
+        {description && <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{description}</p>}
         <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
           {cashback && <span className="font-semibold text-primary">+ {offer.stores.rate_prefix ? `${offer.stores.rate_prefix.toLowerCase()} ` : ""}{cashback} cashback</span>}
           {offer.ends_at && <span>Ends {format(new Date(offer.ends_at), "MMM d, yyyy")}</span>}
@@ -68,15 +70,16 @@ export function OfferCard({ offer, settings, showStore = true }: { offer: Public
 
       <div className="sm:w-44 sm:shrink-0">
         {isCode ? (
-          <button
+          <Button
+            variant="outline"
             onClick={reveal}
             className="group relative flex h-11 w-full items-center overflow-hidden rounded-xl border-2 border-dashed border-primary bg-secondary font-mono text-sm font-bold"
           >
-            <span className="flex-1 pl-14 text-right tracking-widest">{offer.code!.slice(-3)}</span>
+            <span className="flex-1 pl-14 text-right tracking-widest">{offer.code?.slice(-3)}</span>
             <span className="absolute inset-y-0 left-0 flex w-[78%] items-center justify-center rounded-r-lg bg-primary font-sans text-primary-foreground transition-all group-hover:w-[72%]">
               Show code
             </span>
-          </button>
+          </Button>
         ) : (
           <Button asChild className="h-11 w-full">
             <Link to="/go/$slug" params={{ slug: offer.stores.slug }} search={goSearch} target="_blank" rel="nofollow">
@@ -91,7 +94,7 @@ export function OfferCard({ offer, settings, showStore = true }: { offer: Public
           <DialogContent className="max-w-md">
             <DialogHeader className="items-center text-center">
               <StoreLogo name={offer.stores.name} src={offer.stores.logo_url} className="h-14 w-24" />
-              <DialogTitle className="pt-2 text-center">{offer.title}</DialogTitle>
+              <DialogTitle className="pt-2 text-center">{title}</DialogTitle>
               <DialogDescription className="text-center">
                 Copy this code, then paste it at checkout on {offer.stores.name}.
               </DialogDescription>
@@ -102,7 +105,7 @@ export function OfferCard({ offer, settings, showStore = true }: { offer: Public
                 size="sm"
                 variant={copied ? "forest" : "default"}
                 onClick={async () => {
-                  if (await copyText(offer.code!)) {
+                  if (offer.code && await copyText(offer.code)) {
                     setCopied(true);
                     toast.success("Code copied");
                   } else toast.message("Select the code and copy it");

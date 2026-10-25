@@ -1,5 +1,7 @@
 # Roadmap
 
+- [x] Conceal coupon codes in offer titles and descriptions before reveal
+
 - [x] Design system (money green) + site layout
 - [x] Public pages: home, all stores, store page, how it works
 - [x] Sign in / sign up (email + Google), password reset

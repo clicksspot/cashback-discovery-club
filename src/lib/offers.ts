@@ -63,6 +63,15 @@ export function extractDiscount(ad: AdLike): OfferDiscount {
 
 export type OfferLabelInput = OfferDiscount & { deal_type?: string | null };
 
+/** Conceals a known coupon in display text without changing the saved offer or code. */
+export function concealCouponCode(text: string, code: string | null | undefined): string {
+  const value = code?.trim();
+  if (!value) return text;
+  const escaped = value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const pattern = new RegExp(`(^|[^A-Za-z0-9_-])(?:(?:promo\\s*code|coupon\\s*code|code|coupon)\\s*[:\\-]?\\s*["“'‘]?)?${escaped}(?![A-Za-z0-9_-])["”'’]?`, "gi");
+  return text.replace(pattern, "$1this code");
+}
+
 function fmtAmount(amount: number, currency: string | null) {
   try {
     return new Intl.NumberFormat("en-US", {

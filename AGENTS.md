@@ -10,6 +10,7 @@
 <!-- LOVABLE:END -->
 
 ## Project rules
+- Conceal known coupons in shared OfferCard display text through the client-safe offers helper, leaving saved codes intact. Why: existing and newly imported offers must follow the same reveal behavior.
 - Money rules (shopper share, cashback rounding, tracking link subId1) live in `src/lib/cashback.ts` with tests; reuse them instead of re-deriving. Why: one source of truth for payouts.
 - All Impact API access goes through `src/lib/impact.server.ts`, loaded only via dynamic import inside server handlers. Why: it reads secrets and uses the admin database client.
 - Impact GET requests use bounded timeouts, one network retry, and manually validated same-origin redirects. Why: transient failures can recover without forwarding credentials to another host.

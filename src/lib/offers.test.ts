@@ -1,5 +1,20 @@
 import { describe, expect, it } from "vitest";
-import { discountLabel, extractCode, extractDiscount, isExpired, isPlaceholderAd, offerTitle } from "./offers";
+import { concealCouponCode, discountLabel, extractCode, extractDiscount, isExpired, isPlaceholderAd, offerTitle } from "./offers";
+
+describe("concealCouponCode", () => {
+  it("conceals every occurrence in titles and descriptions regardless of case", () => {
+    for (const text of ["Up To $55 Off with code SAVEBIG", "Use savebig at checkout. SAVEBIG ends Sunday.", "SAVEBIG"]) {
+      expect(concealCouponCode(text, "SAVEBIG").toLowerCase()).not.toContain("savebig");
+    }
+  });
+  it("handles punctuation in an exact coupon value", () => {
+    expect(concealCouponCode('Use code "SAVE+10" today', "SAVE+10")).not.toContain("SAVE+10");
+  });
+  it("keeps plain deals and unrelated words unchanged", () => {
+    expect(concealCouponCode("Save 50% today", null)).toBe("Save 50% today");
+    expect(concealCouponCode("Shipping to SAVE50VILLE", "SAVE50")).toBe("Shipping to SAVE50VILLE");
+  });
+});
 
 describe("extractCode", () => {
   it("uses Impact's default promo code first", () => {
