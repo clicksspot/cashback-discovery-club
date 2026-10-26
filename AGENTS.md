@@ -10,6 +10,7 @@
 <!-- LOVABLE:END -->
 
 ## Project rules
+- Store sync fills only missing categories using deterministic public-brand text classification in store-categories; unmatched brands go to Other Stores and existing selections are preserved. Why: Partner Campaigns does not document advertiser categories, so site grouping must not pretend to be official Impact taxonomy or override admin choices.
 - Shared offer cards use the client-safe offer-countdown helper and timer component for actual saved deadlines; elapsed offers disable claim actions. Why: all offer surfaces must show consistent live expiry without fabricated urgency.
 - Conceal known coupons in shared OfferCard display text through the client-safe offers helper, leaving saved codes intact. Why: existing and newly imported offers must follow the same reveal behavior.
 - Money rules (shopper share, cashback rounding, tracking link subId1) live in `src/lib/cashback.ts` with tests; reuse them instead of re-deriving. Why: one source of truth for payouts.
