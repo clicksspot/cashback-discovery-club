@@ -197,7 +197,7 @@ export async function syncStores(admin: Admin, settings: Settings) {
   const categoryBySlug = new Map(categories.map((c) => [c.slug, c.id]));
   const inferredSlugs = new Map(active.map((c) => {
     const ex = byCampaign.get(str(c["CampaignId"]));
-    return [str(c["CampaignId"]), inferStoreCategory(ex?.name ?? str(c["CampaignName"]) || str(c["AdvertiserName"]), str(c["CampaignDescription"]) || ex?.description)];
+    return [str(c["CampaignId"]), inferStoreCategory(ex?.name ?? (str(c["CampaignName"]) || str(c["AdvertiserName"])), str(c["CampaignDescription"]) || ex?.description)] as const;
   }));
   const neededSlugs = new Set(inferredSlugs.values());
   const missingCategories = [...STORE_CATEGORY_RULES, OTHER_STORES_CATEGORY]
