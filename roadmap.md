@@ -1,5 +1,7 @@
 # Roadmap
 
+- [x] Check Impact category documentation, fix category import, sync and verify store assignments (553 assigned; 300 inferred browsing groups, 253 Other Stores for review; 20 tests passed and Fashion filter verified)
+
 - [x] Add and verify live end-date countdowns on shared offer cards (25 tests passed; live coupon reveal and deal timers checked, no phone overflow)
 
 - [x] Conceal coupon codes in offer titles and descriptions before reveal

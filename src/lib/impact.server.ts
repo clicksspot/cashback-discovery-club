@@ -7,6 +7,7 @@ import { fetchAllRows } from "./fetch-all";
 import { extractCode, extractDiscount, isExpired, isPlaceholderAd, offerTitle } from "./offers";
 import { decryptCredentials, encryptCredentials } from "./credential-encryption.server";
 import { extractImpactDetails, readImpactDetails, safeWebsite } from "./impact-details";
+import { inferStoreCategory, resolveStoreCategory, STORE_CATEGORY_RULES, OTHER_STORES_CATEGORY } from "./store-categories";
 
 type Admin = SupabaseClient<Database>;
 type Json = Record<string, unknown>;
@@ -177,10 +178,10 @@ export async function syncStores(admin: Admin, settings: Settings) {
   const existing = await fetchAllRows((from, to) =>
     admin
       .from("stores")
-      .select("id, impact_campaign_id, name, slug, logo_url, commission_type, commission_rate, impact_status, website_url, impact_details")
+      .select("id, impact_campaign_id, name, slug, logo_url, commission_type, commission_rate, impact_status, website_url, impact_details, category_id, description")
       .range(from, to),
   );
-  const byCampaign = new Map(existing.filter((s) => s.impact_campaign_id).map((s) => [s.impact_campaign_id!, s]));
+  const byCampaign = new Map(existing.flatMap((s) => s.impact_campaign_id ? [[s.impact_campaign_id, s] as const] : []));
   const slugs = new Set(existing.map((s) => s.slug));
   const now = new Date().toISOString();
 
@@ -189,6 +190,29 @@ export async function syncStores(admin: Admin, settings: Settings) {
     return !status || status === "active";
   });
   const activeIds = new Set(active.map((c) => str(c["CampaignId"])));
+
+  // Partner Campaigns does not document advertiser categories. These are site browsing
+  // groups inferred from public brand text, never presented as Impact's taxonomy.
+  const categories = await fetchAllRows((from, to) => admin.from("categories").select("id, slug").range(from, to));
+  const categoryBySlug = new Map(categories.map((c) => [c.slug, c.id]));
+  const inferredSlugs = new Map(active.map((c) => {
+    const ex = byCampaign.get(str(c["CampaignId"]));
+    return [str(c["CampaignId"]), inferStoreCategory(ex?.name ?? (str(c["CampaignName"]) || str(c["AdvertiserName"])), str(c["CampaignDescription"]) || ex?.description)] as const;
+  }));
+  const neededSlugs = new Set(inferredSlugs.values());
+  const missingCategories = [...STORE_CATEGORY_RULES, OTHER_STORES_CATEGORY]
+    .filter((c) => neededSlugs.has(c.slug) && !categoryBySlug.has(c.slug))
+    .map((c, i) => ({ name: c.name, slug: c.slug, icon: c.icon, sort_order: categories.length + i }));
+  if (missingCategories.length) {
+    const { data, error } = await admin.from("categories").upsert(missingCategories, { onConflict: "slug", ignoreDuplicates: true }).select("id, slug");
+    if (error) throw new Error(`Saving browsing categories failed: ${error.message}`);
+    for (const category of data ?? []) categoryBySlug.set(category.slug, category.id);
+    // Include rows concurrently created by another import without changing their settings.
+    const refreshed = await fetchAllRows((from, to) => admin.from("categories").select("id, slug").range(from, to));
+    for (const category of refreshed) categoryBySlug.set(category.slug, category.id);
+  }
+  let categoriesAssigned = 0;
+  let otherStores = 0;
 
   const inserts: Database["public"]["Tables"]["stores"]["Insert"][] = [];
   const updates: Database["public"]["Tables"]["stores"]["Insert"][] = [];
@@ -202,10 +226,15 @@ export async function syncStores(admin: Admin, settings: Settings) {
     const logo = `/api/public/store-logo/${campaignId}`;
     const details = extractImpactDetails(c);
     const website = details.advertiser_url ?? details.campaign_url;
+    const inferredSlug = inferredSlugs.get(campaignId);
+    const categoryId = resolveStoreCategory(ex?.category_id, inferredSlug ? categoryBySlug.get(inferredSlug) : undefined);
+    if (!ex?.category_id && categoryId) categoriesAssigned++;
+    if (categoryId === categoryBySlug.get(OTHER_STORES_CATEGORY.slug)) otherStores++;
     if (ex) {
       updates.push({
         impact_campaign_id: campaignId,
         name: ex.name,
+        category_id: categoryId,
         slug: ex.slug,
         impact_advertiser_id: str(c["AdvertiserId"]) || null,
         tracking_link: trackingLink,
@@ -226,6 +255,7 @@ export async function syncStores(admin: Admin, settings: Settings) {
         impact_campaign_id: campaignId,
         impact_advertiser_id: str(c["AdvertiserId"]) || null,
         name,
+        category_id: categoryId,
         slug,
         description: details.description ?? null,
         website_url: website ?? null,
@@ -266,6 +296,8 @@ export async function syncStores(admin: Admin, settings: Settings) {
     updated_stores: updates.length,
     hidden_stores: expired.length,
     rates_found: rates.size,
+    categories_assigned: categoriesAssigned,
+    other_stores: otherStores,
     ...(contractsError ? { rates_warning: contractsError } : {}),
   };
 }

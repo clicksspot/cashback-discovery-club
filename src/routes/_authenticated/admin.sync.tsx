@@ -32,6 +32,8 @@ const STAT_LABELS: Record<string, string> = {
   updated_stores: "Stores updated",
   hidden_stores: "Stores hidden (no longer approved)",
   rates_found: "Commission rates found",
+  categories_assigned: "Missing categories filled (site grouping)",
+  other_stores: "Other Stores (needs category review)",
   rates_warning: "Rate warning",
   sales_found: "Sales found",
   saved: "Sales saved",
