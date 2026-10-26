@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Add and verify live end-date countdowns on shared offer cards
+
 - [x] Conceal coupon codes in offer titles and descriptions before reveal
 
 - [x] Design system (money green) + site layout

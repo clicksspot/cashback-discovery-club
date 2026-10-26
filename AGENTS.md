@@ -10,6 +10,7 @@
 <!-- LOVABLE:END -->
 
 ## Project rules
+- Shared offer cards use the client-safe offer-countdown helper and timer component for actual saved deadlines; elapsed offers disable claim actions. Why: all offer surfaces must show consistent live expiry without fabricated urgency.
 - Conceal known coupons in shared OfferCard display text through the client-safe offers helper, leaving saved codes intact. Why: existing and newly imported offers must follow the same reveal behavior.
 - Money rules (shopper share, cashback rounding, tracking link subId1) live in `src/lib/cashback.ts` with tests; reuse them instead of re-deriving. Why: one source of truth for payouts.
 - All Impact API access goes through `src/lib/impact.server.ts`, loaded only via dynamic import inside server handlers. Why: it reads secrets and uses the admin database client.

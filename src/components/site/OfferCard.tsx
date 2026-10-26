@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { format } from "date-fns";
 import { Check, Copy, Crown, ExternalLink, Scissors, Tag } from "lucide-react";
 import { toast } from "sonner";
 import { StoreLogo } from "./StoreLogo";
+import { OfferCountdown, useOfferCountdown } from "./OfferCountdown";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { concealCouponCode, discountLabel } from "@/lib/offers";
@@ -23,6 +23,8 @@ async function copyText(text: string) {
 export function OfferCard({ offer, settings, showStore = true }: { offer: PublicOffer; settings: Settings; showStore?: boolean }) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const countdown = useOfferCountdown(offer.ends_at);
+  const expired = countdown?.expired ?? false;
   const label = discountLabel(offer);
   const cashback = formatRate(offer.stores, settings.default_cashback_percent, settings.currency);
   const goSearch = { offer: offer.id };
@@ -31,6 +33,7 @@ export function OfferCard({ offer, settings, showStore = true }: { offer: Public
   const description = concealCouponCode(offer.description ?? "", offer.code);
 
   const reveal = async () => {
+    if (expired) return;
     setOpen(true);
     if (offer.code && (await copyText(offer.code))) setCopied(true);
   };
@@ -62,14 +65,16 @@ export function OfferCard({ offer, settings, showStore = true }: { offer: Public
         </div>
         <h3 className="mt-1.5 line-clamp-2 text-base font-bold leading-snug">{title}</h3>
         {description && <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{description}</p>}
-        <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
+        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground">
           {cashback && <span className="font-semibold text-primary">+ {offer.stores.rate_prefix ? `${offer.stores.rate_prefix.toLowerCase()} ` : ""}{cashback} cashback</span>}
-          {offer.ends_at && <span>Ends {format(new Date(offer.ends_at), "MMM d, yyyy")}</span>}
-        </p>
+          {offer.ends_at && countdown && <OfferCountdown value={countdown} endsAt={offer.ends_at} />}
+        </div>
       </div>
 
       <div className="sm:w-44 sm:shrink-0">
-        {isCode ? (
+        {expired ? (
+          <Button variant="outline" disabled className="h-11 w-full">Offer ended</Button>
+        ) : isCode ? (
           <Button
             variant="outline"
             onClick={reveal}
@@ -114,11 +119,11 @@ export function OfferCard({ offer, settings, showStore = true }: { offer: Public
                 {copied ? <Check /> : <Copy />} {copied ? "Copied" : "Copy"}
               </Button>
             </div>
-            <Button asChild size="lg" className="w-full">
+            {expired ? <Button disabled size="lg" className="w-full">Offer ended</Button> : <Button asChild size="lg" className="w-full">
               <Link to="/go/$slug" params={{ slug: offer.stores.slug }} search={goSearch} target="_blank" rel="nofollow">
                 Go to {offer.stores.name} {cashback ? `& earn ${cashback} back` : ""} <ExternalLink />
               </Link>
-            </Button>
+            </Button>}
             <p className="text-center text-xs text-muted-foreground">
               Stay signed in so your cashback is tracked on this order.
             </p>
