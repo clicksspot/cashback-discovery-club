@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AmazonDealsRouteImport } from './routes/amazon-deals'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DealsRouteImport } from './routes/deals'
 import { Route as HelpRouteImport } from './routes/help'
@@ -27,6 +28,7 @@ import { Route as GoSlugRouteImport } from './routes/go.$slug'
 import { Route as StoresIndexRouteImport } from './routes/stores.index'
 import { Route as StoresSlugRouteImport } from './routes/stores.$slug'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedAdminAmazonRouteImport } from './routes/_authenticated/admin.amazon'
 import { Route as AuthenticatedAdminCategoriesRouteImport } from './routes/_authenticated/admin.categories'
 import { Route as AuthenticatedAdminClaimsRouteImport } from './routes/_authenticated/admin.claims'
 import { Route as AuthenticatedAdminOffersRouteImport } from './routes/_authenticated/admin.offers'
@@ -46,6 +48,11 @@ const IndexRoute = IndexRouteImport.update({
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AmazonDealsRoute = AmazonDealsRouteImport.update({
+  id: '/amazon-deals',
+  path: '/amazon-deals',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -128,6 +135,12 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAdminAmazonRoute =
+  AuthenticatedAdminAmazonRouteImport.update({
+    id: '/amazon',
+    path: '/amazon',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminCategoriesRoute =
   AuthenticatedAdminCategoriesRouteImport.update({
     id: '/categories',
@@ -194,6 +207,7 @@ const ApiPublicStoreLogoCampaignIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/amazon-deals': typeof AmazonDealsRoute
   '/auth': typeof AuthRoute
   '/deals': typeof DealsRoute
   '/help': typeof HelpRoute
@@ -209,6 +223,7 @@ export interface FileRoutesByFullPath {
   '/go/$slug': typeof GoSlugRoute
   '/stores/$slug': typeof StoresSlugRoute
   '/stores/': typeof StoresIndexRoute
+  '/admin/amazon': typeof AuthenticatedAdminAmazonRoute
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/admin/claims': typeof AuthenticatedAdminClaimsRoute
   '/admin/offers': typeof AuthenticatedAdminOffersRoute
@@ -224,6 +239,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/amazon-deals': typeof AmazonDealsRoute
   '/auth': typeof AuthRoute
   '/deals': typeof DealsRoute
   '/help': typeof HelpRoute
@@ -238,6 +254,7 @@ export interface FileRoutesByTo {
   '/go/$slug': typeof GoSlugRoute
   '/stores/$slug': typeof StoresSlugRoute
   '/stores': typeof StoresIndexRoute
+  '/admin/amazon': typeof AuthenticatedAdminAmazonRoute
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/admin/claims': typeof AuthenticatedAdminClaimsRoute
   '/admin/offers': typeof AuthenticatedAdminOffersRoute
@@ -255,6 +272,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/amazon-deals': typeof AmazonDealsRoute
   '/auth': typeof AuthRoute
   '/deals': typeof DealsRoute
   '/help': typeof HelpRoute
@@ -270,6 +288,7 @@ export interface FileRoutesById {
   '/go/$slug': typeof GoSlugRoute
   '/stores/$slug': typeof StoresSlugRoute
   '/stores/': typeof StoresIndexRoute
+  '/_authenticated/admin/amazon': typeof AuthenticatedAdminAmazonRoute
   '/_authenticated/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/_authenticated/admin/claims': typeof AuthenticatedAdminClaimsRoute
   '/_authenticated/admin/offers': typeof AuthenticatedAdminOffersRoute
@@ -287,6 +306,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/amazon-deals'
     | '/auth'
     | '/deals'
     | '/help'
@@ -302,6 +322,7 @@ export interface FileRouteTypes {
     | '/go/$slug'
     | '/stores/$slug'
     | '/stores/'
+    | '/admin/amazon'
     | '/admin/categories'
     | '/admin/claims'
     | '/admin/offers'
@@ -317,6 +338,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/amazon-deals'
     | '/auth'
     | '/deals'
     | '/help'
@@ -331,6 +353,7 @@ export interface FileRouteTypes {
     | '/go/$slug'
     | '/stores/$slug'
     | '/stores'
+    | '/admin/amazon'
     | '/admin/categories'
     | '/admin/claims'
     | '/admin/offers'
@@ -347,6 +370,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/amazon-deals'
     | '/auth'
     | '/deals'
     | '/help'
@@ -362,6 +386,7 @@ export interface FileRouteTypes {
     | '/go/$slug'
     | '/stores/$slug'
     | '/stores/'
+    | '/_authenticated/admin/amazon'
     | '/_authenticated/admin/categories'
     | '/_authenticated/admin/claims'
     | '/_authenticated/admin/offers'
@@ -379,6 +404,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AmazonDealsRoute: typeof AmazonDealsRoute
   AuthRoute: typeof AuthRoute
   DealsRoute: typeof DealsRoute
   HelpRoute: typeof HelpRoute
@@ -408,6 +434,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/amazon-deals': {
+      id: '/amazon-deals'
+      path: '/amazon-deals'
+      fullPath: '/amazon-deals'
+      preLoaderRoute: typeof AmazonDealsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -522,6 +555,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/amazon': {
+      id: '/_authenticated/admin/amazon'
+      path: '/amazon'
+      fullPath: '/admin/amazon'
+      preLoaderRoute: typeof AuthenticatedAdminAmazonRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/categories': {
       id: '/_authenticated/admin/categories'
       path: '/categories'
@@ -603,6 +643,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminAmazonRoute: typeof AuthenticatedAdminAmazonRoute
   AuthenticatedAdminCategoriesRoute: typeof AuthenticatedAdminCategoriesRoute
   AuthenticatedAdminClaimsRoute: typeof AuthenticatedAdminClaimsRoute
   AuthenticatedAdminOffersRoute: typeof AuthenticatedAdminOffersRoute
@@ -616,6 +657,7 @@ interface AuthenticatedAdminRouteChildren {
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminAmazonRoute: AuthenticatedAdminAmazonRoute,
   AuthenticatedAdminCategoriesRoute: AuthenticatedAdminCategoriesRoute,
   AuthenticatedAdminClaimsRoute: AuthenticatedAdminClaimsRoute,
   AuthenticatedAdminOffersRoute: AuthenticatedAdminOffersRoute,
@@ -651,6 +693,7 @@ const AuthenticatedRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AmazonDealsRoute: AmazonDealsRoute,
   AuthRoute: AuthRoute,
   DealsRoute: DealsRoute,
   HelpRoute: HelpRoute,
