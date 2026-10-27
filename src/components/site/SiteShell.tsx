@@ -122,6 +122,7 @@ function SiteFooter() {
         <div className="md:col-span-2">
           <Logo name={settings.site_name} light />
           <p className="mt-4 max-w-sm text-sm text-forest-foreground/70">{settings.tagline}</p>
+          <p className="mt-4 max-w-sm text-sm text-forest-foreground">As an Amazon Associate I earn from qualifying purchases.</p>
         </div>
         <div>
           <h4 className="text-sm font-semibold">Explore</h4>

@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { settingsQuery, storeOffersQuery, storeQuery } from "@/lib/public.functions";
 import { OfferCard } from "@/components/site/OfferCard";
 import { FavoriteButton } from "@/components/site/FavoriteButton";
+import { AmazonDisclosure } from "@/components/site/AmazonDisclosure";
+import { isAmazonUSA } from "@/lib/amazon";
 import { previousRateLabel } from "@/components/site/StoreCard";
 import { formatRate } from "@/lib/cashback";
 import { countryLabel, readImpactDetails, safeWebsite } from "@/lib/impact-details";
@@ -62,6 +64,7 @@ function StorePage() {
   const description = store.description || details.description;
   const website = details.advertiser_url ?? safeWebsite(store.website_url);
   const countries = (details.shipping_regions ?? []).map(countryLabel).sort((a, b) => a.localeCompare(b));
+  const amazon = isAmazonUSA(store);
 
   return (
     <SiteShell>
@@ -82,6 +85,7 @@ function StorePage() {
                 Shop now & earn <ArrowRight />
               </Link>
             </Button>
+            {amazon && <AmazonDisclosure className="max-w-xs text-center text-forest-foreground" />}
             <FavoriteButton storeId={store.id} withLabel className="justify-center" />
             <p className="text-center text-xs text-forest-foreground/60">Sign in first so we can track your cashback</p>
           </div>
@@ -109,6 +113,7 @@ function StorePage() {
                   <a href={website} target="_blank" rel="noopener noreferrer"><ExternalLink className="h-4 w-4 shrink-0" /><span className="break-all">{new URL(website).hostname}</span></a>
                 </Button>
               )}
+              {amazon && website && <AmazonDisclosure />}
             </div>
           )}
           <section className="border-b border-border pb-7">
