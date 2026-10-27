@@ -43,6 +43,13 @@
       "when": 1792807158440,
       "tag": "0005_impact_store_details",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1793074538748,
+      "tag": "0006_amazon_manual_offers",
+      "breakpoints": true
     }
   ]
 }

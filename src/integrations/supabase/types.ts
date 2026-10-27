@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      amazon_offers: {
+        Row: {
+          affiliate_url: string
+          created_at: string
+          description: string
+          id: string
+          image_url: string | null
+          is_active: boolean
+          sort_order: number
+          title: string
+        }
+        Insert: {
+          affiliate_url: string
+          created_at?: string
+          description?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          sort_order?: number
+          title: string
+        }
+        Update: {
+          affiliate_url?: string
+          created_at?: string
+          description?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          sort_order?: number
+          title?: string
+        }
+        Relationships: []
+      }
       app_settings: {
         Row: {
           key: string
