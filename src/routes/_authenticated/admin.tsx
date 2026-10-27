@@ -39,6 +39,7 @@ const NAV = [
   { to: "/admin", label: "Overview", icon: LayoutDashboard, exact: true },
   { to: "/admin/stores", label: "Stores", icon: Store },
   { to: "/admin/offers", label: "Deals & coupons", icon: Tag },
+  { to: "/admin/amazon", label: "Amazon USA offers", icon: Tag },
   { to: "/admin/categories", label: "Categories", icon: FolderTree },
   { to: "/admin/transactions", label: "Cashback & sales", icon: ArrowLeftRight },
   { to: "/admin/withdrawals", label: "Withdrawals", icon: Wallet },
