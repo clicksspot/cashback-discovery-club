@@ -3,11 +3,13 @@ import { Link } from "@tanstack/react-router";
 import { Check, Copy, Crown, ExternalLink, Scissors, Tag } from "lucide-react";
 import { toast } from "sonner";
 import { StoreLogo } from "./StoreLogo";
+import { AmazonDisclosure } from "./AmazonDisclosure";
 import { OfferCountdown, useOfferCountdown } from "./OfferCountdown";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { concealCouponCode, discountLabel } from "@/lib/offers";
 import { formatRate } from "@/lib/cashback";
+import { isAmazonUSA } from "@/lib/amazon";
 import type { PublicOffer } from "@/lib/public.functions";
 import type { Settings } from "@/lib/settings";
 
@@ -31,6 +33,7 @@ export function OfferCard({ offer, settings, showStore = true }: { offer: Public
   const isCode = !!offer.code;
   const title = concealCouponCode(offer.title, offer.code);
   const description = concealCouponCode(offer.description ?? "", offer.code);
+  const amazon = isAmazonUSA(offer.stores);
 
   const reveal = async () => {
     if (expired) return;
@@ -92,6 +95,7 @@ export function OfferCard({ offer, settings, showStore = true }: { offer: Public
             </Link>
           </Button>
         )}
+        {amazon && <AmazonDisclosure />}
       </div>
 
       {isCode && (
@@ -124,6 +128,7 @@ export function OfferCard({ offer, settings, showStore = true }: { offer: Public
                 Go to {offer.stores.name} {cashback ? `& earn ${cashback} back` : ""} <ExternalLink />
               </Link>
             </Button>}
+            {amazon && <AmazonDisclosure className="text-center text-muted-foreground" />}
             <p className="text-center text-xs text-muted-foreground">
               Stay signed in so your cashback is tracked on this order.
             </p>

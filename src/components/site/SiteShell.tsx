@@ -56,6 +56,7 @@ function SiteHeader() {
           <Link to="/how-it-works" className="rounded-md px-3 py-2 text-sm font-medium text-foreground/80 hover:bg-secondary" activeProps={{ className: "bg-secondary text-foreground" }}>
             How it works
           </Link>
+          <Link to="/amazon-deals" className="rounded-md px-3 py-2 text-sm font-medium text-foreground/80 hover:bg-secondary" activeProps={{ className: "bg-secondary text-foreground" }}>Amazon USA</Link>
           <Link to="/refer" className="rounded-md px-3 py-2 text-sm font-medium text-foreground/80 hover:bg-secondary" activeProps={{ className: "bg-secondary text-foreground" }}>
             Refer & earn
           </Link>
@@ -97,6 +98,7 @@ function SiteHeader() {
             <Link to="/how-it-works" onClick={() => setOpen(false)} className="rounded-md px-2 py-2 font-medium">How it works</Link>
             <Link to="/refer" onClick={() => setOpen(false)} className="rounded-md px-2 py-2 font-medium">Refer & earn</Link>
             <Link to="/help" onClick={() => setOpen(false)} className="rounded-md px-2 py-2 font-medium">Help</Link>
+            <Link to="/amazon-deals" onClick={() => setOpen(false)} className="rounded-md px-2 py-2 font-medium">Amazon USA deals</Link>
             {user ? (
               <>
                 {isAdmin && <Link to="/admin" onClick={() => setOpen(false)} className="rounded-md px-2 py-2 font-medium">Admin</Link>}
@@ -122,6 +124,7 @@ function SiteFooter() {
         <div className="md:col-span-2">
           <Logo name={settings.site_name} light />
           <p className="mt-4 max-w-sm text-sm text-forest-foreground/70">{settings.tagline}</p>
+          <p className="mt-4 max-w-sm text-sm text-forest-foreground">As an Amazon Associate I earn from qualifying purchases.</p>
         </div>
         <div>
           <h4 className="text-sm font-semibold">Explore</h4>
@@ -130,6 +133,7 @@ function SiteFooter() {
             {settings.show_deals && <li><Link to="/deals" search={{}} className="hover:text-lime">Deals & coupons</Link></li>}
             <li><Link to="/how-it-works" className="hover:text-lime">How it works</Link></li>
             <li><Link to="/refer" className="hover:text-lime">Refer a friend</Link></li>
+            <li><Link to="/amazon-deals" className="hover:text-lime">Amazon USA deals</Link></li>
           </ul>
         </div>
         <div>

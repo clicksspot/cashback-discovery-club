@@ -1,4 +1,6 @@
 # Roadmap
+- [ ] Add and verify Amazon earnings statement and nearby affiliate disclosures
+- [ ] Add Amazon USA public deals section and admin-managed offers with direct SiteStripe links, no cashback or sign-in
 
 - [x] Check Impact category documentation, fix category import, sync and verify store assignments (553 assigned; 300 inferred browsing groups, 253 Other Stores for review; 20 tests passed and Fashion filter verified)
 

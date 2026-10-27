@@ -9,6 +9,8 @@ import { StoreCard } from "@/components/site/StoreCard";
 import { CategoryIcon } from "@/components/site/CategoryIcon";
 import { categoriesQuery, settingsQuery, storesQuery, topOffersQuery } from "@/lib/public.functions";
 import { OfferCard } from "@/components/site/OfferCard";
+import { AmazonDeals } from "@/components/site/AmazonDeals";
+import { amazonOffersQuery } from "@/lib/amazon.functions";
 
 export const Route = createFileRoute("/")({
   loader: async ({ context }) => {
@@ -17,6 +19,7 @@ export const Route = createFileRoute("/")({
       context.queryClient.ensureQueryData(storesQuery),
       context.queryClient.ensureQueryData(categoriesQuery),
       context.queryClient.ensureQueryData(topOffersQuery),
+      context.queryClient.ensureQueryData(amazonOffersQuery),
     ]);
     return { siteName: settings.site_name, tagline: settings.tagline };
   },
@@ -43,6 +46,7 @@ function Home() {
   const { data: stores } = useSuspenseQuery(storesQuery);
   const { data: categories } = useSuspenseQuery(categoriesQuery);
   const { data: topOffers } = useSuspenseQuery(topOffersQuery);
+  const { data: amazonOffers } = useSuspenseQuery(amazonOffersQuery);
   const navigate = useNavigate();
   const [q, setQ] = useState("");
 
@@ -153,6 +157,7 @@ function Home() {
       )}
 
       {/* How it works */}
+      <AmazonDeals offers={amazonOffers.slice(0, 6)} />
       <section className="container-page mt-20">
         <h2 className="text-center text-3xl font-extrabold">Cash back in three steps</h2>
         <div className="mt-10 grid gap-5 md:grid-cols-3">
